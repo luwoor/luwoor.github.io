@@ -77,16 +77,26 @@ description: 人间烟火气，最抚凡人心。
                 {% endif %}
             </section>
 
-            {% if site.recommend-tags and site.tags.size>0 %}
-            <section class="tags-card">
-                {% for tag in site.tags %}
-                    {% if forloop.index > site.recommend-condition-size %}
-                        {% break %}
-                    {% endif %}
-                    <a href="{{ "tags.html#" | append: tag[0] | relative_url }}" class="tag">{{ tag[0]}}</a>
-                {% endfor %}
-            </section>
-            {% endif %}
+           <!--主题中显示标签tags的相关代码  -->
+ {% if site.recommend-tags and site.tags.size>0 %}
+  <section class="tags-card">{% raw %}
+    {% for tag in site.tags %}
+      {% if forloop.index > site.recommend-condition-size %}
+        {% break %}
+      {% endif %}
+      <a href="{{ "tags.html#" | append: tag[0] | relative_url }}" 
+         class="tag">{{ tag[0]}}</a>
+    {% endfor %}{% endraw %}
+  </section>
+ {% endif %}
+<!--增加显示QRcode的代码 -->
+ {% if site.QRcode %}
+  <section class="sns-links" >
+     <div class="avatar" align="center">                    
+        <img src="{{ page.qrcode-img | relative_url }}" alt="">
+     </div>
+  </section>
+ {% endif %}
         </div>
 
         {% if site.search %}

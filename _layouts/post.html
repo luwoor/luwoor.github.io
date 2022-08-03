@@ -46,8 +46,18 @@
       <div class="social-share"></div>
     </div>
     {% endif %}
+        <!--增加引入comments的代码 -->
+    {% if site.gitalk_shortname %}
+    <section class="post-footer-item comment">
+      <h2 id="comments">评论</h2>
+      {% include comments.html %}
+    </section>
+    {% endif %}
+  </section>
   </div>
 
+  
+  
   <section class="author-detail">
     <section class="post-footer-item author-card">
       <div class="avatar">

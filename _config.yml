@@ -26,7 +26,7 @@ footer:
 # Author 配置博主信息
 author: 'luwoor'
 nickname: '季末'
-bio: '博客主持'
+bio: '业余电台主播'
 avatar: '/assets/img/profile.png'
 
 # Search
@@ -58,6 +58,7 @@ postPatterns: 'circuitBoard'
 sns:
 
   github: '//github.com/luwoor'
+  email: 'luwoor+github@gmail.com'
 
 # Tags 设置标签
 recommend-tags: true # whether or not display recommend-tags on the sidebar

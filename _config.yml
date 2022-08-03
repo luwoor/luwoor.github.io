@@ -36,8 +36,7 @@ search: true
 nightMode: true
 
 # Comments 评论功能
-comments: 
-  gitalk_shortname: luwoor
+gitalk_shortname: luwoor
 
 # MathJax 公式支持 by Ray-Eldath
 mathjax: true

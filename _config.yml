@@ -3,6 +3,8 @@ title: '798城市站'
 description: '有关电台《寂寞打酱油》的一些文章。'
 keyword: '季末，798城市站，寂寞打酱油，电台片花'
 url: '' # your host
+home-title: '798城市站'
+description: '人间烟火气，最抚凡人心。'
 
 # when build blog on server, if you don't need baseurl, you should leave this value blank.
 # 在服务器上建站时，如果你不需要子域名，请将这一格留空

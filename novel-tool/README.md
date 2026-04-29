@@ -1,4 +1,4 @@
-<div style="font-size: 14px; line-height: 1.5;">
+<div style="font-size: 10px; line-height: 1.5;">
 
 ## 小说工具使用说明
 本文件夹包含两款小说工具，无需修改代码，直接打开即可使用。

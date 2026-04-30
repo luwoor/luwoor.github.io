@@ -13,24 +13,23 @@
         }
 
         body {
-            /* 高清背景图，网站加载稳定 */
-            background: url("https://p3-flow-image-sign.byteimg.com/tos-cn-i-a9rns2rl98/32bcd0b66bc44ee8b7d7242031f6d68b~tplv-a9rns2rl98-image.image") no-repeat center center;
+            /* 必应每日背景图，JS动态加载 */
             background-size: cover;
+            background-position: center center;
             background-attachment: fixed;
             min-height: 100vh;
-            /* 整体水平+垂直居中 */
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 60px;
+            gap: 100px; /* 左右两大块间距拉大 */
             padding: 20px;
+            transition: background 0.8s ease;
         }
 
-        /* -------------------------- 左侧：独立Mac磨砂窗口 -------------------------- */
+        /* -------------------------- 左栏：个人窗口 -------------------------- */
         .left-window {
             width: 280px;
             height: 420px;
-            /* 网站完美生效：磨砂玻璃+半透明 */
             background: rgba(255, 255, 255, 0.72);
             -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
@@ -41,18 +40,18 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* -------------------------- 右侧：两个错位堆叠磨砂窗口（网站完美穿透） -------------------------- */
+        /* -------------------------- 右栏：大幅错位交叉堆叠（核心修改！！！） -------------------------- */
         .right-stack {
             position: relative;
             width: 550px;
             height: 400px;
         }
 
-        /* 底层窗口：靠后、更透明 */
+        /* 底层窗口：大幅往【左上】错位（拉大距离，完整露出内容） */
         .window-back {
             position: absolute;
-            top: 25px;
-            left: 25px;
+            top: -45px;
+            left: -45px;
             width: 550px;
             height: 400px;
             background: rgba(255, 255, 255, 0.65);
@@ -65,11 +64,11 @@
             border: 1px solid rgba(255,255,255,0.15);
         }
 
-        /* 顶层窗口：靠前、半透明穿透下层文字，网站专属效果 */
+        /* 顶层窗口：大幅往【右下】错位（交叉距离拉满，完美露出底层封面） */
         .window-front {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 45px;
+            left: 45px;
             width: 550px;
             height: 400px;
             background: rgba(255, 255, 255, 0.75);
@@ -82,7 +81,7 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* -------------------------- Mac窗口标题栏（完整复刻） -------------------------- */
+        /* -------------------------- 窗口标题栏 -------------------------- */
         .window-header {
             background: rgba(245, 245, 245, 0.8);
             padding: 10px 15px;
@@ -118,7 +117,7 @@
             color: #333;
         }
 
-        /* 左侧个人窗口内容 */
+        /* 左侧个人内容 */
         .left-content {
             display: flex;
             flex-direction: column;
@@ -181,7 +180,7 @@
             background: rgba(0,0,0,0.05);
         }
 
-        /* 右侧小说窗口内容 */
+        /* 右侧小说内容（优化封面展示） */
         .book-content {
             display: flex;
             gap: 20px;
@@ -193,6 +192,8 @@
             height: 160px;
             border-radius: 6px;
             object-fit: cover;
+            background: #f0f0f0;
+            border:1px solid #ddd;
         }
 
         .book-text {
@@ -208,7 +209,7 @@
             text-align: center;
             color: #fff;
             font-size: 13px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
             line-height: 1.8;
         }
 
@@ -216,7 +217,7 @@
         @media (max-width: 900px) {
             body {
                 flex-direction: column;
-                gap: 40px;
+                gap: 60px;
             }
             .right-stack {
                 width: 90vw;
@@ -228,7 +229,7 @@
     </style>
 </head>
 <body>
-    <!-- 左侧：独立磨砂窗口（个人资料） -->
+    <!-- 左栏：个人窗口 -->
     <div class="left-window">
         <div class="window-header">
             <div class="dot red"></div>
@@ -238,7 +239,7 @@
         </div>
         <div class="window-content left-content">
             <div class="avatar">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="头像">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bookfan" alt="头像">
             </div>
             <div class="name-title">I'm BookFan</div>
             <div class="line"></div>
@@ -255,9 +256,9 @@
         </div>
     </div>
 
-    <!-- 右侧：两个错位堆叠磨砂窗口（网站穿透效果拉满） -->
+    <!-- 右栏：大幅交叉堆叠窗口（完美露出底层封面） -->
     <div class="right-stack">
-        <!-- 底层窗口（靠后、半透明） -->
+        <!-- 底层窗口：大幅左上偏移 -->
         <div class="window-back">
             <div class="window-header">
                 <div class="dot red"></div>
@@ -266,17 +267,20 @@
                 <div class="window-title">more.sh — 更多好书推荐</div>
             </div>
             <div class="window-content">
-                <p>root@book ~ ></p>
-                <p>推荐更多优质小说资源...</p>
-                <p>1. 都市爽文合集</p>
-                <p>2. 古风仙侠精选</p>
-                <p>3. 悬疑烧脑小说</p>
-                <p>4. 无限流小说精选</p>
-                <p>5. 穿越重生高分文</p>
+                <div class="book-content">
+                    <div class="book-cover"></div>
+                    <div class="book-text">
+                        <p>root@book ~ > cat book2.txt</p>
+                        <p>📖 书名：我在精神病院学斩神</p>
+                        <p>📌 类型：都市 / 异能 / 脑洞</p>
+                        <p>✨ 简介：精神病院藏龙卧虎，主角觉醒斩神之力...</p>
+                        <p>🔥 热度：已完结 · 400万字</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 顶层窗口（靠前、网站专属穿透效果，能隐约看到下层文字） -->
+        <!-- 顶层窗口：大幅右下偏移（完美压住底层一角，露出底层封面） -->
         <div class="window-front">
             <div class="window-header">
                 <div class="dot red"></div>
@@ -286,7 +290,7 @@
             </div>
             <div class="window-content">
                 <div class="book-content">
-                    <img class="book-cover" src="https://img95.699pic.com/xsj/0p/4o/v0.jpg!/fh/300" alt="小说封面">
+                    <div class="book-cover"></div>
                     <div class="book-text">
                         <p>root@book ~ > cat book.txt</p>
                         <p>📖 书名：我的右眼是神级计算机</p>
@@ -299,10 +303,25 @@
         </div>
     </div>
 
-    <!-- 底部版权备注 -->
+    <!-- 底部版权 -->
     <footer>
         📖 所有小说版权归原作者及平台所有 | 本站仅作个人阅读分享<br>
         ⚠️ 禁止商用，侵权请联系删除 | © 2025 个人小说播客
     </footer>
+
+    <!-- 必应每日背景图接口（核心！！！） -->
+    <script>
+        // 调用必应官方接口，自动加载每日高清壁纸
+        fetch("https://bing.wdbyte.com/bing/")
+        .then(res => res.json())
+        .then(data => {
+            // 设置必应每日壁纸为背景
+            document.body.style.backgroundImage = `url(${data.url})`;
+        })
+        .catch(() => {
+            // 接口失败兜底图，保证不空白
+            document.body.style.backgroundImage = `url(https://p3-flow-image-sign.byteimg.com/tos-cn-i-a9rns2rl98/32bcd0b66bc44ee8b7d7242031f6d68b~tplv-a9rns2rl98-image.image)`;
+        });
+    </script>
 </body>
 </html>

@@ -15,10 +15,11 @@
         .config-item label {display:block;margin-bottom:8px;font-weight:500;color:#555;}
         .config-item input,.config-item textarea {width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
         .config-item textarea {min-height:100px;resize:vertical;}
+        .tip {font-size:12px;color:#888;margin-top:4px;}
         .btn-group {display:flex;gap:15px;margin-top:20px;}
         .btn {padding:10px 25px;border:none;border-radius:6px;cursor:pointer;font-size:15px;}
         .btn-primary {background:#ff6b35;color:#fff;}
-        .btn-success {background:#28a745;color:#fff;}
+        .btn-success {background:#28a4c9;color:#fff;}
         .preview-panel {max-width:1000px;margin:0 auto;}
         .bread-nav {font-size:14px;color:#666;padding:15px 20px;}
         .top-wrapper {display:flex;align-items:center;padding:30px 20px;border-bottom:1px solid #eee;}
@@ -61,6 +62,7 @@
         <div class="config-item">
             <label>小说封面</label>
             <input type="file" id="coverInput" accept="image/*">
+            <div class="tip">推荐尺寸：320×420px | 支持jpg/png</div>
         </div>
         <div class="config-item">
             <label>小说名称</label>
@@ -77,6 +79,7 @@
         <div class="config-item">
             <label>作者头像</label>
             <input type="file" id="authorAvatarInput" accept="image/*">
+            <div class="tip">推荐尺寸：200×200px | 支持jpg/png</div>
         </div>
         <div class="config-item">
             <label>作者名称</label>
@@ -134,20 +137,26 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
-let novelData={cover:"",name:"",tags:[],intro:"",authorAvatar:"",authorName:"",authorBio:"",chapters:[],wordCount:0,lastChapter:""};
+let novelData={
+    coverFile:null,
+    avatarFile:null,
+    name:"",tags:[],intro:"",authorName:"",authorBio:"",chapters:[],wordCount:0,lastChapter:""
+};
 
+// 封面上传（保存文件对象）
 document.getElementById("coverInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=e=>{novelData.cover=e.target.result;document.getElementById("previewCover").src=novelData.cover;};
-    reader.readAsDataURL(file);
+    novelData.coverFile = file;
+    const url=URL.createObjectURL(file);
+    document.getElementById("previewCover").src=url;
 });
 
+// 头像上传（保存文件对象）
 document.getElementById("authorAvatarInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=e=>{novelData.authorAvatar=e.target.result;document.getElementById("previewAvatar").src=novelData.authorAvatar;};
-    reader.readAsDataURL(file);
+    novelData.avatarFile = file;
+    const url=URL.createObjectURL(file);
+    document.getElementById("previewAvatar").src=url;
 });
 
 document.getElementById("txtInput").addEventListener("change",function(e){
@@ -221,6 +230,11 @@ function exportZip(){
         return;
     }
     const zip=new JSZip();
+    
+    // 把图片真实写入ZIP（不是base64）
+    if(novelData.coverFile) zip.file("cover.jpg", novelData.coverFile);
+    if(novelData.avatarFile) zip.file("avatar.jpg", novelData.avatarFile);
+    
     zip.file("index.html",generateIndexPage());
     novelData.chapters.forEach((chap,idx)=>{
         const prevIdx=idx>0?idx-1:null;
@@ -263,7 +277,7 @@ function generateIndexPage(){
     ".novel-stat{font-size:14px;color:#666;margin-bottom:6px}"+
     ".novel-update{font-size:13px;color:#888;margin-bottom:12px}"+
     ".btn-read{background:#ff6b35;color:#fff;padding:8px 20px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;display:inline-block}"+
-    ".author-avatar{width:80px;height:80px;border-radius:50%;background:#f0f0f0;margin-bottom:10px;border:2px solid #ff6b35}"+
+    ".author-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;background:#f0f0f0;margin-bottom:10px;border:2px solid #ff6b35}"+
     ".author-label{background:#ff6b35;color:#fff;padding:3px 8px;border-radius:4px;font-size:12px;margin-right:6px}"+
     ".author-name{font-size:16px;font-weight:bold;display:flex;align-items:center;justify-content:center}"+
     ".author-desc{font-size:12px;color:#888;max-width:160px}"+
@@ -292,7 +306,7 @@ function generateIndexPage(){
     "<div class='bread-nav'>小说目录</div>"+
     "<div class='top-wrapper'>"+
     "<div class='novel-section'>"+
-    "<img class='novel-cover' src='"+novelData.cover+"'>"+
+    "<img class='novel-cover' src='cover.jpg'>"+
     "<div class='novel-info'>"+
     "<div class='novel-title'>"+novelData.name+"</div>"+
     "<div class='novel-tags'>"+novelData.tags.map(t=>t.includes("完结")||t.includes("连载")?"<span class='tag tag-status'>"+t+"</span>":"<span class='tag'>"+t+"</span>").join("")+"</div>"+
@@ -302,7 +316,7 @@ function generateIndexPage(){
     "</div></div>"+
     "<div class='split-line'></div>"+
     "<div class='author-section'>"+
-    "<img class='author-avatar' src='"+novelData.authorAvatar+"'>"+
+    "<img class='author-avatar' src='avatar.jpg'>"+
     "<div class='author-name'><span class='author-label'>作者</span>"+novelData.authorName+"</div>"+
     "<div class='author-desc'>"+novelData.authorBio+"</div></div></div>"+
     "<div class='section'><div class='section-title'>作品简介</div><div class='intro-text'>"+novelData.intro+"</div></div>"+

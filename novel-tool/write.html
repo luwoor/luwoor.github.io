@@ -1,614 +1,712 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>小说创作器</title>
-<style>
-:root{
-    --bg:#f5f7fa;
-    --card:#ffffff;
-    --text:#2c3e50;
-    --border:#d0d7e3;
-    --primary:#2c5282;
-    --hover:#e1e8f5;
-    --tip-color:#888888;
-    --purple:#805ad5;
-    --btn-dark:#2d3748;
-}
-.dark{
-    --bg:#1a1d24;
-    --card:#272b33;
-    --text:#e8e8e8;
-    --border:#444;
-    --primary:#4a7fc2;
-    --hover:#2c3e55;
-    --tip-color:#aaaaaa;
-    --purple:#9f7aea;
-    --btn-dark:#4a5568;
-}
-*{box-sizing:border-box;margin:0;padding:0;transition:background 0.3s,color 0.3s;}
-body{
-    font-family:"Microsoft YaHei",sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:15px;
-    height:100vh;
-    overflow:hidden;
-}
+  <meta charset="UTF-8">
+  <title>小说创作器</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #2c3e50;
+      --border: #d0d7e3;
+      --primary: #2c5282;
+      --hover: #e1e8f5;
+      --tip-color: #888888;
+      --purple: #805ad5;
+      --btn-dark: #2d3748;
+    }
 
-.wrapper{
-    display:flex;
-    align-items:stretch;
-    height:calc(100vh - 30px);
-    gap:0;
-}
+    .dark {
+      --bg: #1a1d24;
+      --card: #272b33;
+      --text: #e8e8e8;
+      --border: #444;
+      --primary: #4a7fc2;
+      --hover: #2c3e55;
+      --tip-color: #aaaaaa;
+      --purple: #9f7aea;
+      --btn-dark: #4a5568;
+    }
 
-.left-group{
-    display:flex;
-    align-items:stretch;
-    height:100%;
-}
-.left-panel{
-    width:400px;
-    background:var(--card);
-    border-radius:10px;
-    padding:12px;
-    overflow-y:auto;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-    transition: width 0.3s ease;
-}
-.left-panel.collapsed{
-    width:0;
-    padding:0;
-    overflow:hidden;
-}
-.left-toggle-btn{
-    width:fit-content;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    z-index:10;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
 
-.mid-group{
-    display:flex;
-    align-items:stretch;
-    height:100%;
-    margin-left:6px;
-}
-.mid-panel{
-    width:180px;
-    background:var(--card);
-    border-radius:10px;
-    padding:12px;
-    overflow-y:auto;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-    transition: width 0.3s ease;
-}
-.mid-panel.collapsed{
-    width:0;
-    padding:0;
-    overflow:hidden;
-}
-.mid-toggle-btn{
-    width:fit-content;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    z-index:10;
-}
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 15px;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-.right-panel{
-    flex:1;
-    background:var(--card);
-    border-radius:10px;
-    padding:15px;
-    display:flex;
-    flex-direction:column;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-}
+    .wrapper {
+      display: flex;
+      align-items: stretch;
+      height: calc(100vh - 30px);
+      gap: 0;
+    }
 
-.toggle-arrow{
-    background:transparent;
-    border:none;
-    color:var(--primary);
-    font-size:14px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.toggle-arrow.collapsed-text{
-    background:var(--btn-dark);
-    color:#fff;
-    border-radius:6px;
-    font-size:11px;
-    writing-mode:vertical-rl;
-    text-orientation:mixed;
-    font-weight:normal;
-    height:95px;
-    width:fit-content;
-    padding:4px 4px;
-    white-space:nowrap;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
+    .left-group {
+      display: flex;
+      align-items: stretch;
+      height: 100%;
+    }
 
-.kb-item{
-    margin-bottom:12px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    overflow:hidden;
-}
-.kb-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:8px 10px;
-    background:var(--primary);
-    color:#fff;
-    font-weight:bold;
-    font-size:14px;
-}
-.kb-content-preview{
-    padding:10px;
-    font-size:12px;
-    line-height:1.5;
-    min-height:35px;
-    white-space:pre-wrap;
-}
-.kb-content-preview.bold{
-    font-weight:bold;
-    font-size:14px;
-}
-.kb-content-edit{
-    display:none;
-    padding:8px;
-}
-.kb-textarea{
-    width:100%;
-    min-height:80px;
-    padding:8px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    background:var(--card);
-    color:var(--text);
-    resize:vertical;
-    margin-bottom:4px;
-    font-size:12px;
-}
-.kb-input{
-    width:100%;
-    padding:8px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    background:var(--card);
-    color:var(--text);
-    font-size:14px;
-    margin-bottom:4px;
-}
-.kb-tip{
-    font-size:10px;
-    color:var(--tip-color);
-    padding:0 4px 4px;
-}
-.kb-btn{
-    padding:3px 8px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer;
-    font-size:11px;
-    margin-left:4px;
-}
-.btn-edit{background:#2b7a78;color:#fff;}
-.btn-save{background:#1f755a;color:#fff;}
+    .left-panel {
+      width: 400px;
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      overflow-y: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: width 0.3s ease;
+    }
 
-.mid-title{
-    font-size:15px;
-    font-weight:bold;
-    text-align:center;
-    margin-bottom:12px;
-    color:var(--primary);
-}
-.chapter-list{
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-}
-.chapter-item{
-    padding:7px 10px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    cursor:pointer;
-    transition:background 0.2s;
-    font-size:13px;
-}
-.chapter-item:hover{
-    background:var(--hover);
-}
-.chapter-item.active{
-    background:var(--primary);
-    color:#fff;
-    border-color:var(--primary);
-}
+    .left-panel.collapsed {
+      width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
 
-.btn-group{
-    display:flex;
-    gap:8px;
-    margin-bottom:12px;
-}
-.btn{
-    padding:8px 14px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:13px;
-    white-space:nowrap;
-}
-.btn-primary{background:var(--primary);color:#fff;}
-.btn-success{background:#1f755a;color:#fff;}
-.btn-danger{background:#c53030;color:#fff;}
-.btn-warning{background:var(--purple);color:#fff;}
+    .left-toggle-btn {
+      width: fit-content;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
 
-.edit-title{
-    width:100%;
-    padding:10px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    margin-bottom:12px;
-    font-size:15px;
-    background:var(--card);
-    color:var(--text);
-}
-.edit-content{
-    flex:1;
-    width:100%;
-    padding:12px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    resize:none;
-    font-size:14px;
-    line-height:1.7;
-    background:var(--card);
-    color:var(--text);
-    margin-bottom:12px;
-}
+    .mid-group {
+      display: flex;
+      align-items: stretch;
+      height: 100%;
+      margin-left: 6px;
+    }
 
-.bottom-info{
-    display:flex;
-    gap:12px;
-}
-.word-count{
-    width:40%;
-    padding:10px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    font-size:12px;
-    line-height:1.6;
-}
-.note-info{
-    flex:1;
-    padding:10px;
-    border:1px solid var(--border);
-    border-radius:6px;
-    font-size:11px;
-    line-height:1.5;
-    color:var(--tip-color);
-    overflow-y:auto;
-    max-height:150px;
-}
-.toggle-theme{
-    position:fixed;
-    top:15px;
-    right:15px;
-    z-index:99;
-}
-</style>
+    .mid-panel {
+      width: 180px;
+      background: var(--card);
+      border-radius: 10px;
+      padding: 12px;
+      overflow-y: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: width 0.3s ease;
+    }
+
+    .mid-panel.collapsed {
+      width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .mid-toggle-btn {
+      width: fit-content;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .right-panel {
+      flex: 1;
+      background: var(--card);
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .toggle-arrow {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-arrow.collapsed-text {
+      background: var(--btn-dark);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 11px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-weight: normal;
+      height: 95px;
+      width: fit-content;
+      padding: 4px 4px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kb-item {
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .kb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .kb-content-preview {
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      min-height: 35px;
+      white-space: pre-wrap;
+    }
+
+    .kb-content-preview.bold {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .kb-content-edit {
+      display: none;
+      padding: 8px;
+    }
+
+    .kb-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--text);
+      resize: vertical;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .kb-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .kb-tip {
+      font-size: 10px;
+      color: var(--tip-color);
+      padding: 0 4px 4px;
+    }
+
+    .kb-btn {
+      padding: 3px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    .btn-edit {
+      background: #2b7a78;
+      color: #fff;
+    }
+
+    .btn-save {
+      background: #1f755a;
+      color: #fff;
+    }
+
+    .mid-title {
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .chapter-item {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 13px;
+    }
+
+    .chapter-item:hover {
+      background: var(--hover);
+    }
+
+    .chapter-item.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #1f755a;
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: #c53030;
+      color: #fff;
+    }
+
+    .btn-warning {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .edit-title {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      background: var(--card);
+      color: var(--text);
+    }
+
+    .edit-content {
+      flex: 1;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      resize: none;
+      font-size: 14px;
+      line-height: 1.7;
+      background: var(--card);
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .bottom-info {
+      display: flex;
+      gap: 12px;
+    }
+
+    .word-count {
+      width: 40%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .note-info {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--tip-color);
+      overflow-y: auto;
+      max-height: 150px;
+    }
+
+    .toggle-theme {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 99;
+    }
+  </style>
 </head>
-<body>
-<button class="btn toggle-theme btn-primary" onclick="toggleTheme()">🌓 明暗切换</button>
 
-<div class="wrapper">
+<body>
+  <button class="btn toggle-theme btn-primary" onclick="toggleTheme()">🌓 明暗切换</button>
+
+  <div class="wrapper">
     <div class="left-group">
-        <div class="left-panel" id="leftPanel">
-            <h3 style="margin-bottom:12px;text-align:center;font-size:15px;">📚 小说知识库</h3>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>📖 小说名</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('novelName')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('novelName')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview bold" id="preview_novelName">暂无名称</div>
-                <div class="kb-content-edit" id="edit_novelName">
-                    <input type="text" class="kb-input" id="input_novelName">
-                    <div class="kb-tip">填写小说总名称</div>
-                </div>
+      <div class="left-panel" id="leftPanel">
+        <h3 style="margin-bottom:12px;text-align:center;font-size:15px;">📚 小说知识库</h3>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>📖 小说名</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('novelName')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('novelName')">保存</button>
             </div>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>🌍 世界观</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('worldview')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('worldview')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview" id="preview_worldview">暂无内容</div>
-                <div class="kb-content-edit" id="edit_worldview">
-                    <textarea class="kb-textarea" id="textarea_worldview"></textarea>
-                    <div class="kb-tip">世界观、背景、规则、力量体系</div>
-                </div>
-            </div>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>👤 人物</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('characters')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('characters')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview" id="preview_characters">暂无内容</div>
-                <div class="kb-content-edit" id="edit_characters">
-                    <textarea class="kb-textarea" id="textarea_characters"></textarea>
-                    <div class="kb-tip">姓名、外貌、性格、背景、能力、弱点</div>
-                </div>
-            </div>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>📝 大纲</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('outline')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('outline')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview" id="preview_outline">暂无内容</div>
-                <div class="kb-content-edit" id="edit_outline">
-                    <textarea class="kb-textarea" id="textarea_outline"></textarea>
-                    <div class="kb-tip">核心冲突、分卷、节奏、反转</div>
-                </div>
-            </div>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>🔍 伏笔</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('foreshadow')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('foreshadow')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview" id="preview_foreshadow">暂无内容</div>
-                <div class="kb-content-edit" id="edit_foreshadow">
-                    <textarea class="kb-textarea" id="textarea_foreshadow"></textarea>
-                    <div class="kb-tip">伏笔内容、关联人物、回收计划</div>
-                </div>
-            </div>
-            <div class="kb-item">
-                <div class="kb-header">
-                    <span>💡 灵感</span>
-                    <div>
-                        <button class="kb-btn btn-edit" onclick="switchKbEdit('inspire')">编辑</button>
-                        <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('inspire')">保存</button>
-                    </div>
-                </div>
-                <div class="kb-content-preview" id="preview_inspire">暂无内容</div>
-                <div class="kb-content-edit" id="edit_inspire">
-                    <textarea class="kb-textarea" id="textarea_inspire"></textarea>
-                    <div class="kb-tip">金句、脑洞、细节想法</div>
-                </div>
-            </div>
+          </div>
+          <div class="kb-content-preview bold" id="preview_novelName">暂无名称</div>
+          <div class="kb-content-edit" id="edit_novelName">
+            <input type="text" class="kb-input" id="input_novelName">
+            <div class="kb-tip">填写小说总名称</div>
+          </div>
         </div>
-        <div class="left-toggle-btn">
-            <button class="toggle-arrow" id="leftArrow" onclick="toggleLeft()">◀</button>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>🌍 世界观</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('worldview')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('worldview')">保存</button>
+            </div>
+          </div>
+          <div class="kb-content-preview" id="preview_worldview">暂无内容</div>
+          <div class="kb-content-edit" id="edit_worldview">
+            <textarea class="kb-textarea" id="textarea_worldview"></textarea>
+            <div class="kb-tip">世界观、背景、规则、力量体系</div>
+          </div>
         </div>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>👤 人物</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('characters')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('characters')">保存</button>
+            </div>
+          </div>
+          <div class="kb-content-preview" id="preview_characters">暂无内容</div>
+          <div class="kb-content-edit" id="edit_characters">
+            <textarea class="kb-textarea" id="textarea_characters"></textarea>
+            <div class="kb-tip">姓名、外貌、性格、背景、能力、弱点</div>
+          </div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>📝 大纲</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('outline')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('outline')">保存</button>
+            </div>
+          </div>
+          <div class="kb-content-preview" id="preview_outline">暂无内容</div>
+          <div class="kb-content-edit" id="edit_outline">
+            <textarea class="kb-textarea" id="textarea_outline"></textarea>
+            <div class="kb-tip">核心冲突、分卷、节奏、反转</div>
+          </div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>🔍 伏笔</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('foreshadow')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('foreshadow')">保存</button>
+            </div>
+          </div>
+          <div class="kb-content-preview" id="preview_foreshadow">暂无内容</div>
+          <div class="kb-content-edit" id="edit_foreshadow">
+            <textarea class="kb-textarea" id="textarea_foreshadow"></textarea>
+            <div class="kb-tip">伏笔内容、关联人物、回收计划</div>
+          </div>
+        </div>
+        <div class="kb-item">
+          <div class="kb-header">
+            <span>💡 灵感</span>
+            <div>
+              <button class="kb-btn btn-edit" onclick="switchKbEdit('inspire')">编辑</button>
+              <button class="kb-btn btn-save" style="display:none" onclick="saveKbEdit('inspire')">保存</button>
+            </div>
+          </div>
+          <div class="kb-content-preview" id="preview_inspire">暂无内容</div>
+          <div class="kb-content-edit" id="edit_inspire">
+            <textarea class="kb-textarea" id="textarea_inspire"></textarea>
+            <div class="kb-tip">金句、脑洞、细节想法</div>
+          </div>
+        </div>
+      </div>
+      <div class="left-toggle-btn">
+        <button class="toggle-arrow" id="leftArrow" onclick="toggleLeft()">◀</button>
+      </div>
     </div>
 
     <div class="mid-group">
-        <div class="mid-panel" id="midPanel">
-            <div class="mid-title">📖 章节列表</div>
-            <div class="chapter-list" id="chapterList"></div>
-        </div>
-        <div class="mid-toggle-btn">
-            <button class="toggle-arrow" id="midArrow" onclick="toggleMid()">◀</button>
-        </div>
+      <div class="mid-panel" id="midPanel">
+        <div class="mid-title">📖 章节列表</div>
+        <div class="chapter-list" id="chapterList"></div>
+      </div>
+      <div class="mid-toggle-btn">
+        <button class="toggle-arrow" id="midArrow" onclick="toggleMid()">◀</button>
+      </div>
     </div>
 
     <div class="right-panel">
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="saveChapter()">💾 保存章节</button>
-            <button class="btn btn-warning" onclick="saveProject()">📦 保存项目</button>
-            <button class="btn btn-primary" onclick="downloadTxt()">📄 导出TXT</button>
-            <button class="btn btn-danger" onclick="resetAll()">🔄 一键初始化</button>
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="saveChapter()">💾 保存章节</button>
+        <button class="btn btn-warning" onclick="saveProject()">📦 保存项目</button>
+        <button class="btn btn-primary" onclick="downloadTxt()">📄 导出TXT</button>
+        <button class="btn btn-danger" onclick="resetAll()">🔄 一键初始化</button>
+      </div>
+      <input type="text" class="edit-title" id="editTitle" placeholder="只需要输入标题，例如：春天">
+      <textarea class="edit-content" id="editContent" placeholder="在这里写章节正文……"></textarea>
+      <div class="bottom-info">
+        <div class="word-count">
+          📊 文字统计：<br>
+          当前章节：<span id="currentWordCount">0</span> 字<br>
+          全书总字数：<span id="totalWordCount">0</span> 字
         </div>
-        <input type="text" class="edit-title" id="editTitle" placeholder="只需要输入标题，例如：春天">
-        <textarea class="edit-content" id="editContent" placeholder="在这里写章节正文……"></textarea>
-        <div class="bottom-info">
-            <div class="word-count">
-                📊 文字统计：<br>
-                当前章节：<span id="currentWordCount">0</span> 字<br>
-                全书总字数：<span id="totalWordCount">0</span> 字
-            </div>
-            <div class="note-info">
-                ⚠️ 使用注意事项：<br>
-                1. 【保存项目】：写完务必点一下，文件名自动为「小说创作器_小说名.html」；<br>
-                2. 【一键初始化】：清空所有内容开新本；<br>
-                3. 【导出TXT】：生成独立小说正文文件；<br>
-                4. 左侧填设定，中间管章节，右侧写正文；<br>
-                5. 右上角可切换明暗护眼模式。
-            </div>
+        <div class="note-info">
+          ⚠️ 使用注意事项：<br>
+          1. 【保存项目】：写完务必点一下，文件名自动为「小说创作器_小说名.html」；<br>
+          2. 【一键初始化】：清空所有内容开新本；<br>
+          3. 【导出TXT】：生成独立小说正文文件；<br>
+          4. 左侧填设定，中间管章节，右侧写正文；<br>
+          5. 右上角可切换明暗护眼模式。
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-function toggleLeft(){
-    const panel = document.getElementById("leftPanel");
-    const arrowBtn = document.getElementById("leftArrow");
-    panel.classList.toggle("collapsed");
-    if(panel.classList.contains("collapsed")){
+  <script>
+    // 左侧面板折叠/展开
+    function toggleLeft() {
+      const panel = document.getElementById("leftPanel");
+      const arrowBtn = document.getElementById("leftArrow");
+      panel.classList.toggle("collapsed");
+
+      if (panel.classList.contains("collapsed")) {
         arrowBtn.classList.add("collapsed-text");
         arrowBtn.innerHTML = "小说知识库";
-    }else{
+      } else {
         arrowBtn.classList.remove("collapsed-text");
         arrowBtn.innerHTML = "◀";
+      }
     }
-}
-function toggleMid(){
-    const panel = document.getElementById("midPanel");
-    const arrowBtn = document.getElementById("midArrow");
-    panel.classList.toggle("collapsed");
-    if(panel.classList.contains("collapsed")){
+
+    // 中间面板折叠/展开
+    function toggleMid() {
+      const panel = document.getElementById("midPanel");
+      const arrowBtn = document.getElementById("midArrow");
+      panel.classList.toggle("collapsed");
+
+      if (panel.classList.contains("collapsed")) {
         arrowBtn.classList.add("collapsed-text");
         arrowBtn.innerHTML = "&nbsp;章节列表&nbsp;";
-    }else{
+      } else {
         arrowBtn.classList.remove("collapsed-text");
         arrowBtn.innerHTML = "◀";
+      }
     }
-}
 
-let chapters = [];
-let currentEditIndex = -1;
+    let chapters = [];
+    let currentEditIndex = -1;
 
-function switchKbEdit(id){
-    document.getElementById(`preview_${id}`).style.display = "none";
-    document.getElementById(`edit_${id}`).style.display = "block";
-    document.querySelector(`.kb-header [onclick="switchKbEdit('${id}')"]`).style.display = "none";
-    document.querySelector(`.kb-header [onclick="saveKbEdit('${id}')"]`).style.display = "inline-block";
-    if(id === "novelName"){
-        let preText = document.getElementById(`preview_${id}`).innerText;
+    // 切换知识库编辑模式
+    function switchKbEdit(id) {
+      document.getElementById(`preview_${id}`).style.display = "none";
+      document.getElementById(`edit_${id}`).style.display = "block";
+      document.querySelector(`.kb-header [onclick="switchKbEdit('${id}')"]`).style.display = "none";
+      document.querySelector(`.kb-header [onclick="saveKbEdit('${id}')"]`).style.display = "inline-block";
+
+      if (id === "novelName") {
+        const preText = document.getElementById(`preview_${id}`).innerText;
         document.getElementById(`input_${id}`).value = preText === "暂无名称" ? "" : preText;
-    }else{
-        let preText = document.getElementById(`preview_${id}`).innerText;
+      } else {
+        const preText = document.getElementById(`preview_${id}`).innerText;
         document.getElementById(`textarea_${id}`).value = preText === "暂无内容" ? "" : preText;
+      }
     }
-}
-function saveKbEdit(id){
-    let content;
-    if(id === "novelName"){
+
+    // 保存知识库编辑
+    function saveKbEdit(id) {
+      let content;
+      if (id === "novelName") {
         content = document.getElementById(`input_${id}`).value.trim();
         document.getElementById(`preview_${id}`).innerText = content || "暂无名称";
-    }else{
+      } else {
         content = document.getElementById(`textarea_${id}`).value;
         document.getElementById(`preview_${id}`).innerText = content || "暂无内容";
-    }
-    document.getElementById(`preview_${id}`).style.display = "block";
-    document.getElementById(`edit_${id}`).style.display = "none";
-    document.querySelector(`.kb-header [onclick="switchKbEdit('${id}')"]`).style.display = "inline-block";
-    document.querySelector(`.kb-header [onclick="saveKbEdit('${id}')"]`).style.display = "none";
-}
+      }
 
-function renderChapterList(){
-    const listEl = document.getElementById("chapterList");
-    listEl.innerHTML = "";
-    chapters.forEach((ch, index)=>{
+      document.getElementById(`preview_${id}`).style.display = "block";
+      document.getElementById(`edit_${id}`).style.display = "none";
+      document.querySelector(`.kb-header [onclick="switchKbEdit('${id}')"]`).style.display = "inline-block";
+      document.querySelector(`.kb-header [onclick="saveKbEdit('${id}')"]`).style.display = "none";
+    }
+
+    // 渲染章节列表
+    function renderChapterList() {
+      const listEl = document.getElementById("chapterList");
+      listEl.innerHTML = "";
+
+      chapters.forEach((ch, index) => {
         const div = document.createElement("div");
         div.className = "chapter-item" + (index === currentEditIndex ? " active" : "");
-        div.innerText = `第${index+1}章 ${ch.title}`;
+        div.innerText = `第${index + 1}章 ${ch.title}`;
         div.onclick = () => loadChapter(index);
         listEl.appendChild(div);
-    });
-    updateWordCount();
-}
+      });
 
-function saveChapter(){
-    const title = document.getElementById("editTitle").value.trim();
-    const content = document.getElementById("editContent").value;
-    if(!title){
+      updateWordCount();
+    }
+
+    // 保存章节
+    function saveChapter() {
+      const title = document.getElementById("editTitle").value.trim();
+      const content = document.getElementById("editContent").value;
+
+      if (!title) {
         alert("请输入章节标题！");
         return;
+      }
+
+      if (currentEditIndex === -1) {
+        chapters.push({ title, content });
+      } else {
+        chapters[currentEditIndex] = { title, content };
+      }
+
+      renderChapterList();
+      resetEditArea();
+      alert("✅ 章节保存成功！");
     }
-    if(currentEditIndex === -1){
-        chapters.push({title, content});
-    }else{
-        chapters[currentEditIndex] = {title, content};
+
+    // 加载章节
+    function loadChapter(index) {
+      currentEditIndex = index;
+      const ch = chapters[index];
+      document.getElementById("editTitle").value = ch.title;
+      document.getElementById("editContent").value = ch.content;
+      renderChapterList();
     }
-    renderChapterList();
-    resetEditArea();
-    alert("✅ 章节保存成功！");
-}
 
-function loadChapter(index){
-    currentEditIndex = index;
-    const ch = chapters[index];
-    document.getElementById("editTitle").value = ch.title;
-    document.getElementById("editContent").value = ch.content;
-    renderChapterList();
-}
+    // 清空编辑区
+    function resetEditArea() {
+      currentEditIndex = -1;
+      document.getElementById("editTitle").value = "";
+      document.getElementById("editContent").value = "";
+      updateWordCount();
+      renderChapterList();
+    }
 
-function resetEditArea(){
-    currentEditIndex = -1;
-    document.getElementById("editTitle").value = "";
-    document.getElementById("editContent").value = "";
-    updateWordCount();
-    renderChapterList();
-}
+    // 更新字数统计
+    function updateWordCount() {
+      const currentContent = document.getElementById("editContent").value;
+      const currentCount = currentContent.replace(/\s/g, "").length;
+      document.getElementById("currentWordCount").innerText = currentCount;
 
-function updateWordCount(){
-    const currentContent = document.getElementById("editContent").value;
-    const currentCount = currentContent.replace(/\s/g, "").length;
-    document.getElementById("currentWordCount").innerText = currentCount;
-    let total = 0;
-    chapters.forEach(ch=>{
+      let total = 0;
+      chapters.forEach(ch => {
         total += ch.content.replace(/\s/g, "").length;
-    });
-    document.getElementById("totalWordCount").innerText = total;
-}
-document.getElementById("editContent").addEventListener("input", updateWordCount);
+      });
+      document.getElementById("totalWordCount").innerText = total;
+    }
 
-function downloadTxt(){
-    if(chapters.length === 0){
+    // 实时统计字数
+    document.getElementById("editContent").addEventListener("input", updateWordCount);
+
+    // 导出TXT
+    function downloadTxt() {
+      if (chapters.length === 0) {
         alert("请先写章节！");
         return;
+      }
+
+      const novelName = document.getElementById("preview_novelName").innerText === "暂无名称"
+        ? "未命名小说"
+        : document.getElementById("preview_novelName").innerText;
+
+      let txt = `《${novelName}》\n\n`;
+      chapters.forEach((ch, index) => {
+        txt += `第${index + 1}章 ${ch.title}\n\n` + ch.content + "\n\n\n";
+      });
+
+      downloadFile(txt, `${novelName}_正文.txt`, "text/plain");
     }
-    const novelName = document.getElementById("preview_novelName").innerText === "暂无名称" ? "未命名小说" : document.getElementById("preview_novelName").innerText;
-    let txt = `《${novelName}》\n\n`;
-    chapters.forEach((ch, index)=>{
-        txt += `第${index+1}章 ${ch.title}\n\n` + ch.content + "\n\n\n";
-    });
-    downloadFile(txt,`${novelName}_正文.txt`,"text/plain");
-}
-function downloadFile(text,name,type){
-    const blob = new Blob([text],{type});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    a.click();
-    URL.revokeObjectURL(url);
-}
 
-function saveProject(){
-    const novelName = document.getElementById("preview_novelName").innerText;
-    const worldview = document.getElementById("preview_worldview").innerText;
-    const characters = document.getElementById("preview_characters").innerText;
-    const outline = document.getElementById("preview_outline").innerText;
-    const foreshadow = document.getElementById("preview_foreshadow").innerText;
-    const inspire = document.getElementById("preview_inspire").innerText;
-    const saveData = {novelName,worldview,characters,outline,foreshadow,inspire,chapters};
-    const saveStr = "<!--PROJECTDATA:" + JSON.stringify(saveData) + "-->";
-    let html = document.documentElement.outerHTML;
-    html = html.replace(/<!--PROJECTDATA:[\s\S]*?-->/, "");
-    html = html.replace("</body>", saveStr + "\n</body>");
-    const blob = new Blob([html], {type:"text/html"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    const fileName = novelName === "暂无名称" ? "小说创作器_未命名小说.html" : `小说创作器_${novelName}.html`;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
-    alert(`✅ 项目保存成功！\n文件名：${fileName}`);
-}
+    // 通用下载函数
+    function downloadFile(text, name, type) {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
-function loadProject(){
-    const html = document.documentElement.outerHTML;
-    const match = html.match(/<!--PROJECTDATA:([\s\S]*?)-->/);
-    if(!match) return;
-    try{
+    // 保存项目（本地HTML）
+    function saveProject() {
+      const novelName = document.getElementById("preview_novelName").innerText;
+      const worldview = document.getElementById("preview_worldview").innerText;
+      const characters = document.getElementById("preview_characters").innerText;
+      const outline = document.getElementById("preview_outline").innerText;
+      const foreshadow = document.getElementById("preview_foreshadow").innerText;
+      const inspire = document.getElementById("preview_inspire").innerText;
+
+      const saveData = { novelName, worldview, characters, outline, foreshadow, inspire, chapters };
+      const saveStr = "<!--PROJECTDATA:" + JSON.stringify(saveData) + "-->";
+
+      let html = document.documentElement.outerHTML;
+      html = html.replace(/<!--PROJECTDATA:[\s\S]*?-->/g, "");
+      html = html.replace("</body>", saveStr + "\n</body>");
+
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const fileName = novelName === "暂无名称"
+        ? "小说创作器_未命名小说.html"
+        : `小说创作器_${novelName}.html`;
+
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      alert(`✅ 项目保存成功！\n文件名：${fileName}`);
+    }
+
+    // 加载项目
+    function loadProject() {
+      const html = document.documentElement.outerHTML;
+      const match = html.match(/<!--PROJECTDATA:([\s\S]*?)-->/);
+      if (!match) return;
+
+      try {
         const saveData = JSON.parse(match[1]);
         document.getElementById("preview_novelName").innerText = saveData.novelName || "暂无名称";
         document.getElementById("preview_worldview").innerText = saveData.worldview || "暂无内容";
@@ -618,31 +716,38 @@ function loadProject(){
         document.getElementById("preview_inspire").innerText = saveData.inspire || "暂无内容";
         chapters = saveData.chapters || [];
         renderChapterList();
-    }catch(e){}
-}
+      } catch (e) {
+        console.error("加载项目失败", e);
+      }
+    }
 
-function resetAll(){
-    if(!confirm("⚠️ 确定初始化？所有内容清空！")) return;
-    document.getElementById("preview_novelName").innerText = "暂无名称";
-    document.getElementById("preview_worldview").innerText = "暂无内容";
-    document.getElementById("preview_characters").innerText = "暂无内容";
-    document.getElementById("preview_outline").innerText = "暂无内容";
-    document.getElementById("preview_foreshadow").innerText = "暂无内容";
-    document.getElementById("preview_inspire").innerText = "暂无内容";
-    chapters = [];
-    renderChapterList();
-    resetEditArea();
-    alert("✅ 初始化完成！");
-}
+    // 一键初始化
+    function resetAll() {
+      if (!confirm("⚠️ 确定初始化？所有内容清空！")) return;
 
-function toggleTheme(){
-    document.body.classList.toggle("dark");
-}
+      document.getElementById("preview_novelName").innerText = "暂无名称";
+      document.getElementById("preview_worldview").innerText = "暂无内容";
+      document.getElementById("preview_characters").innerText = "暂无内容";
+      document.getElementById("preview_outline").innerText = "暂无内容";
+      document.getElementById("preview_foreshadow").innerText = "暂无内容";
+      document.getElementById("preview_inspire").innerText = "暂无内容";
 
-window.onload = function(){
-    loadProject();
-    updateWordCount();
-};
-</script>
+      chapters = [];
+      renderChapterList();
+      resetEditArea();
+      alert("✅ 初始化完成！");
+    }
+
+    // 明暗切换
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+
+    // 页面加载完成后执行
+    window.onload = function () {
+      loadProject();
+      updateWordCount();
+    };
+  </script>
 </body>
 </html>

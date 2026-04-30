@@ -42,7 +42,9 @@
         .section {padding:20px;border-bottom:1px solid #eee;}
         .section-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
         .section-title {font-size:20px;font-weight:bold;}
-        .sort-toggle {font-size:14px;color:#0066cc;cursor:pointer;text-decoration:underline;}
+        .sort-buttons {font-size:14px;}
+        .sort-btn {color:#666;cursor:pointer;margin-left:10px;}
+        .sort-btn.active {color:#ff6b35;}
         .intro-text {line-height:1.7;color:#444;}
         .chapter-list {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
         .chapter-item {padding:8px 12px;background:#f9f9f9;border-radius:6px;font-size:14px;}
@@ -129,7 +131,10 @@
         <div class="section">
             <div class="section-head">
                 <div class="section-title">目录 · <span id="previewChapterCount">0</span>章</div>
-                <span class="sort-toggle" onclick="toggleSort()" id="sortText">倒序</span>
+                <div class="sort-buttons">
+                    <span class="sort-btn active" id="sortAsc" onclick="setSortAsc()">正序</span>
+                    <span class="sort-btn" id="sortDesc" onclick="setSortDesc()">倒序</span>
+                </div>
             </div>
             <div class="chapter-list" id="previewChapters">
                 <div class='chapter-item'>请导入TXT</div>
@@ -191,28 +196,41 @@ function parseChapters(txt){
     novelData.originChapters = [...tmp];
     novelData.chapters = [...tmp];
     novelData.isReverse = false;
-    document.getElementById("sortText").innerText = "倒序";
+    updateSortButtons();
     novelData.wordCount=Math.round(allText.replace(/\s/g,"").length/10000);
     novelData.lastChapter=novelData.chapters.length?novelData.chapters.at(-1).title:"";
     alert("✅ 解析完成：共 "+novelData.chapters.length+" 章");
     updatePreview();
 }
 
-// 正序倒序切换（目录右侧小字）
-function toggleSort(){
+// 设置正序
+function setSortAsc(){
     if(novelData.originChapters.length===0){
         alert("请先导入小说");
         return;
     }
-    novelData.isReverse = !novelData.isReverse;
-    if(novelData.isReverse){
-        novelData.chapters = [...novelData.originChapters].reverse();
-        document.getElementById("sortText").innerText = "正序";
-    }else{
-        novelData.chapters = [...novelData.originChapters];
-        document.getElementById("sortText").innerText = "倒序";
-    }
+    novelData.isReverse = false;
+    novelData.chapters = [...novelData.originChapters];
+    updateSortButtons();
     updatePreview();
+}
+
+// 设置倒序
+function setSortDesc(){
+    if(novelData.originChapters.length===0){
+        alert("请先导入小说");
+        return;
+    }
+    novelData.isReverse = true;
+    novelData.chapters = [...novelData.originChapters].reverse();
+    updateSortButtons();
+    updatePreview();
+}
+
+// 更新按钮样式
+function updateSortButtons(){
+    document.getElementById("sortAsc").classList.toggle("active", !novelData.isReverse);
+    document.getElementById("sortDesc").classList.toggle("active", novelData.isReverse);
 }
 
 function updatePreview(){
@@ -309,7 +327,9 @@ function generateIndexPage(){
     ".section{padding:20px;border-bottom:1px solid #eee}"+
     ".section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}"+
     ".section-title{font-size:20px;font-weight:bold}"+
-    ".sort-toggle{font-size:14px;color:#0066cc;cursor:pointer;text-decoration:underline;}"+
+    ".sort-buttons{font-size:14px}"+
+    ".sort-btn{color:#666;cursor:pointer;margin-left:10px}"+
+    ".sort-btn.active{color:#ff6b35}"+
     ".intro-text{line-height:1.7}"+
     ".chapter-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}"+
     ".chapter-item{padding:8px 12px;background:#f9f9f9;border-radius:6px;cursor:pointer;text-decoration:none;color:#333}"+
@@ -346,7 +366,7 @@ function generateIndexPage(){
     "<div class='author-name'><span class='author-label'>作者</span>"+novelData.authorName+"</div>"+
     "<div class='author-desc'>"+novelData.authorBio+"</div></div></div>"+
     "<div class='section'><div class='section-title'>作品简介</div><div class='intro-text'>"+novelData.intro+"</div></div>"+
-    "<div class='section'><div class='section-head'><div class='section-title'>全部章节 · "+novelData.chapters.length+"章</div></div>"+
+    "<div class='section'><div class='section-head'><div class='section-title'>全部章节 · "+novelData.chapters.length+"章</div><div class='sort-buttons'><span class='sort-btn active'>正序</span><span class='sort-btn'>倒序</span></div></div>"+
     "<div class='chapter-list'>"+novelData.chapters.map((chap,idx)=>"<a class='chapter-item' href='chapter_"+(idx+1)+".html'>"+chap.title+"</a>").join("")+"</div></div></div>"+
     "<script>function toggleNight(){document.body.classList.toggle('night');const btn=event.target;btn.textContent=document.body.classList.contains('night')?'☀':'◐';}<\/script>"+
     "</body></html>";

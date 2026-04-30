@@ -69,7 +69,7 @@
     <div class="config-panel">
       <div class="config-title">📖 小说分章导出器</div>
       <div class="config-item">
-        <label>小说封面</label>
+        <label>小说封面 (自动裁切为 600×800)</label>
         <input type="file" id="coverInput" accept="image/*">
       </div>
       <div class="config-item">
@@ -85,7 +85,7 @@
         <textarea id="novelIntro"></textarea>
       </div>
       <div class="config-item">
-        <label>作者头像</label>
+        <label>作者头像 (自动裁切为 200×200)</label>
         <input type="file" id="authorAvatarInput" accept="image/*">
       </div>
       <div class="config-item">
@@ -148,23 +148,63 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
-    // 工具函数：转义HTML特殊字符，防止XSS或内容显示异常
+    // ========== 工具函数 ==========
     function escapeHtml(text) {
-      return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     }
 
-    // 全局小说数据
+    // 图片处理：居中裁切到目标尺寸，返回 dataURL 和 blob
+    function processImage(file, targetWidth, targetHeight, quality = 0.85) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+
+            // 计算 cover 模式的绘制参数
+            const imgRatio = img.width / img.height;
+            const targetRatio = targetWidth / targetHeight;
+            let drawWidth, drawHeight, offsetX, offsetY;
+            if (imgRatio > targetRatio) {
+              // 图片更宽，以高度为准
+              drawHeight = targetHeight;
+              drawWidth = img.width * (targetHeight / img.height);
+              offsetX = (drawWidth - targetWidth) / 2;
+              offsetY = 0;
+            } else {
+              // 图片更高，以宽度为准
+              drawWidth = targetWidth;
+              drawHeight = img.height * (targetWidth / img.width);
+              offsetX = 0;
+              offsetY = (drawHeight - targetHeight) / 2;
+            }
+            ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
+
+            // 同时获取 dataURL 和 blob
+            const dataURL = canvas.toDataURL('image/jpeg', quality);
+            canvas.toBlob((blob) => {
+              resolve({ dataURL, blob });
+            }, 'image/jpeg', quality);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ========== 小说数据 ==========
     const novelData = {
-      cover: "",
+      cover: null,          // { dataURL, blob } 或 null
       name: "",
       tags: [],
       intro: "",
-      authorAvatar: "",
+      authorAvatar: null,   // { dataURL, blob } 或 null
       authorName: "",
       authorBio: "",
       chapters: [],
@@ -172,51 +212,45 @@
       lastChapter: ""
     };
 
-    // 封面上传
-    document.getElementById("coverInput").addEventListener("change", function (e) {
+    // ========== 封面上传（裁切至 600x800） ==========
+    document.getElementById("coverInput").addEventListener("change", async function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        novelData.cover = e.target.result;
-        document.getElementById("previewCover").src = novelData.cover;
-      };
-      reader.readAsDataURL(file);
+      try {
+        novelData.cover = await processImage(file, 600, 800, 0.85);
+        document.getElementById("previewCover").src = novelData.cover.dataURL;
+      } catch (err) {
+        alert("封面处理失败：" + err.message);
+      }
     });
 
-    // 作者头像上传
-    document.getElementById("authorAvatarInput").addEventListener("change", function (e) {
+    // ========== 作者头像上传（裁切至 200x200） ==========
+    document.getElementById("authorAvatarInput").addEventListener("change", async function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        novelData.authorAvatar = e.target.result;
-        document.getElementById("previewAvatar").src = novelData.authorAvatar;
-      };
-      reader.readAsDataURL(file);
+      try {
+        novelData.authorAvatar = await processImage(file, 200, 200, 0.85);
+        document.getElementById("previewAvatar").src = novelData.authorAvatar.dataURL;
+      } catch (err) {
+        alert("头像处理失败：" + err.message);
+      }
     });
 
-    // TXT 导入解析
-    document.getElementById("txtInput").addEventListener("change", function (e) {
+    // ========== TXT 导入解析 ==========
+    document.getElementById("txtInput").addEventListener("change", function(e) {
       const file = e.target.files[0];
       if (!file) return;
-
-      // 自动填充文件名
       if (!document.getElementById("novelName").value.trim()) {
         document.getElementById("novelName").value = file.name.replace(/\.txt$/i, "");
       }
-
       const reader = new FileReader();
       reader.onload = e => parseChapters(e.target.result);
       reader.readAsText(file, "UTF-8");
     });
 
-    // 解析章节（修复正则lastIndex问题）
     function parseChapters(txt) {
-      // 去掉 g 标志，避免全局正则的lastIndex干扰
-      const reg = /(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/;
+      const reg = /(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/; // 无g标志
       const lines = txt.split("\n").filter(line => line.trim());
-      
       novelData.chapters = [];
       let currentChapter = null;
       let allText = "";
@@ -231,19 +265,14 @@
         }
         allText += line;
       });
-
       if (currentChapter) novelData.chapters.push(currentChapter);
-      // 字数：简单剔除空白后按字数计算（面向中文）
       novelData.wordCount = Math.round(allText.replace(/\s/g, "").length / 10000);
-      novelData.lastChapter = novelData.chapters.length 
-        ? novelData.chapters.at(-1).title 
-        : "";
-
+      novelData.lastChapter = novelData.chapters.length ? novelData.chapters.at(-1).title : "";
       alert("✅ 解析完成：共 " + novelData.chapters.length + " 章");
       updatePreview();
     }
 
-    // 更新预览界面
+    // ========== 更新预览 ==========
     function updatePreview() {
       novelData.name = document.getElementById("novelName").value;
       novelData.tags = document.getElementById("novelTags").value.split(" ").filter(t => t.trim());
@@ -259,37 +288,38 @@
       document.getElementById("previewWordCount").innerText = novelData.wordCount + "万字";
       document.getElementById("previewChapterCount").innerText = novelData.chapters.length;
 
-      // 渲染标签
+      // 封面/头像预览（如果有已处理图片则展示）
+      document.getElementById("previewCover").src = novelData.cover ? novelData.cover.dataURL : "";
+      document.getElementById("previewAvatar").src = novelData.authorAvatar ? novelData.authorAvatar.dataURL : "";
+
+      // 标签
       const tagsContainer = document.getElementById("previewTags");
       tagsContainer.innerHTML = "";
       novelData.tags.forEach(tag => {
         const isStatus = tag.includes("完结") || tag.includes("连载");
-        const cls = isStatus ? "tag tag-status" : "tag";
         const span = document.createElement("span");
-        span.className = cls;
-        span.textContent = tag; // 使用textContent防止XSS
+        span.className = isStatus ? "tag tag-status" : "tag";
+        span.textContent = tag;
         tagsContainer.appendChild(span);
       });
 
-      // 渲染章节列表
+      // 章节列表
       const chapterList = document.getElementById("previewChapters");
       if (novelData.chapters.length === 0) {
         chapterList.innerHTML = "<div class='chapter-item'>请导入TXT</div>";
         return;
       }
-
       chapterList.innerHTML = novelData.chapters
         .map(chap => `<div class='chapter-item'>${escapeHtml(chap.title)}</div>`)
         .join("");
     }
 
-    // 导出 ZIP（改进：按钮loading状态，HTML转义）
+    // ========== 导出 ZIP ==========
     async function exportZip() {
       if (!novelData.name || novelData.chapters.length === 0) {
         alert("⚠️ 请先填写小说名称 + 导入TXT文件！");
         return;
       }
-
       const exportBtn = document.getElementById("exportBtn");
       const originalText = exportBtn.innerText;
       exportBtn.disabled = true;
@@ -297,12 +327,21 @@
 
       try {
         const zip = new JSZip();
-        zip.file("index.html", generateIndexPage());
 
+        // 添加图片文件（如果有）
+        if (novelData.cover && novelData.cover.blob) {
+          zip.file("cover.jpg", novelData.cover.blob);
+        }
+        if (novelData.authorAvatar && novelData.authorAvatar.blob) {
+          zip.file("avatar.jpg", novelData.authorAvatar.blob);
+        }
+
+        // 生成页面（img src 直接使用文件名）
+        zip.file("index.html", generateIndexPage());
         novelData.chapters.forEach((chap, idx) => {
-          const prevIdx = idx > 0 ? idx - 1 : null;
-          const nextIdx = idx < novelData.chapters.length - 1 ? idx + 1 : null;
-          zip.file(`chapter_${idx + 1}.html`, generateChapterPage(chap, idx, prevIdx, nextIdx));
+          const prev = idx > 0 ? idx - 1 : null;
+          const next = idx < novelData.chapters.length - 1 ? idx + 1 : null;
+          zip.file(`chapter_${idx + 1}.html`, generateChapterPage(chap, idx, prev, next));
         });
 
         const content = await zip.generateAsync({ type: "blob" });
@@ -322,10 +361,8 @@
       }
     }
 
-    // 生成目录页（已修复viewport拼写，全站使用escapeHtml）
+    // ========== 生成目录页 ==========
     function generateIndexPage() {
-      const cover = novelData.cover;
-      const avatar = novelData.authorAvatar;
       const name = escapeHtml(novelData.name);
       const intro = escapeHtml(novelData.intro);
       const authorName = escapeHtml(novelData.authorName);
@@ -334,12 +371,16 @@
       const lastChapter = escapeHtml(novelData.lastChapter);
       const chapterCount = novelData.chapters.length;
 
+      // 图片 src：有图用文件名，无图留空
+      const coverSrc = novelData.cover ? "cover.jpg" : "";
+      const avatarSrc = novelData.authorAvatar ? "avatar.jpg" : "";
+
       const tagsHtml = novelData.tags.map(tag => {
         const isStatus = tag.includes("完结") || tag.includes("连载");
         return `<span class="${isStatus ? 'tag tag-status' : 'tag'}">${escapeHtml(tag)}</span>`;
       }).join("");
 
-      const chaptersHtml = novelData.chapters.map((chap, idx) => 
+      const chaptersHtml = novelData.chapters.map((chap, idx) =>
         `<a class='chapter-item' href='chapter_${idx + 1}.html'>${escapeHtml(chap.title)}</a>`
       ).join("");
 
@@ -408,7 +449,7 @@
     <div class='bread-nav'>小说目录</div>
     <div class='top-wrapper'>
       <div class='novel-section'>
-        <img class='novel-cover' src='${cover}'>
+        <img class='novel-cover' src='${coverSrc}'>
         <div class='novel-info'>
           <div class='novel-title'>${name}</div>
           <div class='novel-tags'>${tagsHtml}</div>
@@ -419,7 +460,7 @@
       </div>
       <div class='split-line'></div>
       <div class='author-section'>
-        <img class='author-avatar' src='${avatar}'>
+        <img class='author-avatar' src='${avatarSrc}'>
         <div class='author-name'>
           <span class='author-label'>作者</span>${authorName}
         </div>
@@ -450,7 +491,7 @@
 </html>`;
     }
 
-    // 生成章节页（内容已转义）
+    // ========== 生成章节页 ==========
     function generateChapterPage(chap, idx, prevIdx, nextIdx) {
       const name = escapeHtml(novelData.name);
       const title = escapeHtml(chap.title);

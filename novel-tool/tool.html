@@ -16,11 +16,10 @@
         .config-item input,.config-item textarea {width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
         .config-item textarea {min-height:100px;resize:vertical;}
         .tip {font-size:12px;color:#888;margin-top:4px;}
-        .btn-group {display:flex;gap:15px;margin-top:20px;flex-wrap:wrap;}
+        .btn-group {display:flex;gap:15px;margin-top:20px;}
         .btn {padding:10px 25px;border:none;border-radius:6px;cursor:pointer;font-size:15px;}
         .btn-primary {background:#ff6b35;color:#fff;}
-        .btn-success {background:#28a745;color:#fff;}
-        .btn-other {background:#6c757d;color:#fff;}
+        .btn-success {background:#28a4c9;color:#fff;}
         .preview-panel {max-width:1000px;margin:0 auto;}
         .bread-nav {font-size:14px;color:#666;padding:15px 20px;}
         .top-wrapper {display:flex;align-items:center;padding:30px 20px;border-bottom:1px solid #eee;}
@@ -43,20 +42,14 @@
         .section {padding:20px;border-bottom:1px solid #eee;}
         .section-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
         .section-title {font-size:20px;font-weight:bold;}
+        .sort-toggle {font-size:14px;color:#0066cc;cursor:pointer;text-decoration:underline;}
         .intro-text {line-height:1.7;color:#444;}
         .chapter-list {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
         .chapter-item {padding:8px 12px;background:#f9f9f9;border-radius:6px;font-size:14px;}
         .float-nav {position:fixed;right:20px;bottom:30px;display:flex;flex-direction:column;gap:12px;z-index:999;}
         .float-btn {background:transparent;border:none;font-size:22px;cursor:pointer;color:#666;padding:5px;}
         .float-btn:hover {color:#ff6b35;}
-        @media (max-width:768px){
-            .top-wrapper{flex-direction:column;align-items:center;padding:20px;}
-            .author-section{order:1;margin-bottom:20px;}
-            .split-line{display:none;}
-            .novel-section{order:2;width:100%;}
-            .novel-info{text-align:left;}
-            .chapter-list{grid-template-columns:1fr;}
-        }
+        @media (max-width:768px){.top-wrapper{flex-direction:column;align-items:center;padding:20px;}.author-section{order:1;margin-bottom:20px;}.split-line{display:none;}.novel-section{order:2;width:100%;}.novel-info{text-align:left;}.chapter-list{grid-template-columns:1fr;}}
     </style>
 </head>
 <body>
@@ -103,7 +96,6 @@
         </div>
         <div class="btn-group">
             <button class="btn btn-primary" onclick="updatePreview()">更新预览</button>
-            <button class="btn btn-other" onclick="reverseChapter()">正序/倒序切换</button>
             <button class="btn btn-success" onclick="exportZip()">导出整本书(分章ZIP)</button>
         </div>
     </div>
@@ -137,6 +129,7 @@
         <div class="section">
             <div class="section-head">
                 <div class="section-title">目录 · <span id="previewChapterCount">0</span>章</div>
+                <span class="sort-toggle" onclick="toggleSort()" id="sortText">倒序</span>
             </div>
             <div class="chapter-list" id="previewChapters">
                 <div class='chapter-item'>请导入TXT</div>
@@ -150,12 +143,11 @@ let novelData={
     coverFile:null,
     avatarFile:null,
     name:"",tags:[],intro:"",authorName:"",authorBio:"",
-    chapters:[],originChapters:[], // 保留原始章节，用于正倒序切换
-    wordCount:0,lastChapter:"",
-    isReverse:false
+    chapters:[], originChapters:[], isReverse:false,
+    wordCount:0,lastChapter:""
 };
 
-// 封面上传
+// 封面上传（保存文件对象）
 document.getElementById("coverInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
     novelData.coverFile = file;
@@ -163,7 +155,7 @@ document.getElementById("coverInput").addEventListener("change",function(e){
     document.getElementById("previewCover").src=url;
 });
 
-// 头像上传
+// 头像上传（保存文件对象）
 document.getElementById("authorAvatarInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
     novelData.avatarFile = file;
@@ -180,48 +172,45 @@ document.getElementById("txtInput").addEventListener("change",function(e){
     reader.readAsText(file,"UTF-8");
 });
 
-// 解析章节 保留原始副本
 function parseChapters(txt){
     const reg=/(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/g;
     const lines=txt.split("\n").filter(x=>x.trim());
     let cur=null;
     let allText="";
-    let tempChapters=[];
-
+    let tmp=[];
     lines.forEach(line=>{
         if(reg.test(line.trim())){
-            if(cur)tempChapters.push(cur);
+            if(cur)tmp.push(cur);
             cur={title:line.trim(),content:""};
         }else if(cur){
             cur.content+=line+"\n";
         }
         allText+=line;
     });
-    if(cur)tempChapters.push(cur);
-
-    novelData.originChapters = [...tempChapters];
-    novelData.chapters = [...tempChapters];
+    if(cur)tmp.push(cur);
+    novelData.originChapters = [...tmp];
+    novelData.chapters = [...tmp];
     novelData.isReverse = false;
-
+    document.getElementById("sortText").innerText = "倒序";
     novelData.wordCount=Math.round(allText.replace(/\s/g,"").length/10000);
     novelData.lastChapter=novelData.chapters.length?novelData.chapters.at(-1).title:"";
     alert("✅ 解析完成：共 "+novelData.chapters.length+" 章");
     updatePreview();
 }
 
-// 正序倒序切换
-function reverseChapter(){
+// 正序倒序切换（目录右侧小字）
+function toggleSort(){
     if(novelData.originChapters.length===0){
-        alert("请先导入TXT小说！");
+        alert("请先导入小说");
         return;
     }
     novelData.isReverse = !novelData.isReverse;
     if(novelData.isReverse){
         novelData.chapters = [...novelData.originChapters].reverse();
-        alert("已切换为 倒序");
+        document.getElementById("sortText").innerText = "正序";
     }else{
         novelData.chapters = [...novelData.originChapters];
-        alert("已切换为 正序");
+        document.getElementById("sortText").innerText = "倒序";
     }
     updatePreview();
 }
@@ -267,7 +256,7 @@ function exportZip(){
     }
     const zip=new JSZip();
     
-    // 图片原文件打包，不base64
+    // 把图片真实写入ZIP（不是base64）
     if(novelData.coverFile) zip.file("cover.jpg", novelData.coverFile);
     if(novelData.avatarFile) zip.file("avatar.jpg", novelData.avatarFile);
     
@@ -320,6 +309,7 @@ function generateIndexPage(){
     ".section{padding:20px;border-bottom:1px solid #eee}"+
     ".section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}"+
     ".section-title{font-size:20px;font-weight:bold}"+
+    ".sort-toggle{font-size:14px;color:#0066cc;cursor:pointer;text-decoration:underline;}"+
     ".intro-text{line-height:1.7}"+
     ".chapter-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}"+
     ".chapter-item{padding:8px 12px;background:#f9f9f9;border-radius:6px;cursor:pointer;text-decoration:none;color:#333}"+
@@ -339,7 +329,7 @@ function generateIndexPage(){
     "<button class='float-btn' onclick='window.scrollTo(0,document.body.scrollHeight)'>↓</button>"+
     "</div>"+
     "<div class='container'>"+
-    "<div class='bread-nav'>小说目录</div>"+
+    "<div class='bread-nav'>首页 / "+novelData.name+"</div>"+
     "<div class='top-wrapper'>"+
     "<div class='novel-section'>"+
     "<img class='novel-cover' src='cover.jpg'>"+

@@ -73,26 +73,14 @@
         .float-btn {background:transparent;border:none;font-size:22px;cursor:pointer;color:#666;padding:5px;}
         .float-btn:hover {color:#ff6b35;}
 
-        /* ============================================== */
-        /* 手机端：博客评论样式（左头像 + 右名字+简介） */
-        /* ============================================== */
+        /* 手机端样式 */
         @media (max-width:768px){
             .top-wrapper {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 20px;
             }
-            .novel-section {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-                padding-bottom: 20px;
-                border-bottom: 1px solid #eee; /* 封面与作者之间的线 */
-            }
-            .split-line {display:none !important;}
-
+            /* 作者区块在上，下方加分隔线 */
             .author-section {
                 width: 100%;
                 display: flex;
@@ -100,10 +88,20 @@
                 align-items: flex-start;
                 justify-content: flex-start;
                 gap: 10px;
-                margin: 0 0 25px 0;
-                padding: 0;
+                margin: 0 0 20px 0;
+                padding: 0 0 20px 0;
+                border-bottom: 1px solid #eee;
                 text-align: left;
             }
+            .novel-section {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .split-line {display:none !important;}
+
             .author-avatar {
                 display: block !important;
                 width: 44px !important;
@@ -175,17 +173,7 @@
     <div class="preview-panel">
         <div class="bread-nav">首页 / <span id="previewBreadName">小说名称</span></div>
         <div class="top-wrapper">
-            <div class="novel-section">
-                <img class="novel-cover" id="previewCover">
-                <div class="novel-info">
-                    <div class="novel-title" id="previewName">小说名称</div>
-                    <div class="novel-tags" id="previewTags"></div>
-                    <div class="novel-stat" id="previewWordCount">字数：0万字</div>
-                    <div class="novel-update" id="previewUpdate">最近更新：暂无</div>
-                    <button class="btn-read">开始阅读</button>
-                </div>
-            </div>
-            <div class="split-line"></div>
+            <!-- 手机端：作者放最上面 -->
             <div class="author-section">
                 <img class="author-avatar" id="previewAvatar">
                 <div>
@@ -194,6 +182,20 @@
                         <span id="previewAuthorName">作者名</span>
                     </div>
                     <div class="author-desc" id="previewAuthorBio">作者简介</div>
+                </div>
+            </div>
+
+            <div class="split-line"></div>
+
+            <!-- 然后是封面小说信息 -->
+            <div class="novel-section">
+                <img class="novel-cover" id="previewCover">
+                <div class="novel-info">
+                    <div class="novel-title" id="previewName">小说名称</div>
+                    <div class="novel-tags" id="previewTags"></div>
+                    <div class="novel-stat" id="previewWordCount">字数：0万字</div>
+                    <div class="novel-update" id="previewUpdate">最近更新：暂无</div>
+                    <button class="btn-read">开始阅读</button>
                 </div>
             </div>
         </div>
@@ -421,16 +423,6 @@ body.night .chapter-item{background:#333;color:#ccc}
         align-items: flex-start;
         padding: 20px;
     }
-    .novel-section {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #eee;
-    }
-    .split-line {display:none !important;}
     .author-section {
         width: 100%;
         display: flex;
@@ -438,10 +430,19 @@ body.night .chapter-item{background:#333;color:#ccc}
         align-items: flex-start;
         justify-content: flex-start;
         gap: 10px;
-        margin: 0 0 25px 0;
-        padding: 0;
+        margin: 0 0 20px 0;
+        padding: 0 0 20px 0;
+        border-bottom: 1px solid #eee;
         text-align: left;
     }
+    .novel-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .split-line {display:none !important;}
     .author-avatar {
         display: block !important;
         width: 44px !important;
@@ -472,6 +473,14 @@ body.night .chapter-item{background:#333;color:#ccc}
 <div class="container">
 <div class="bread-nav">首页 / ${novelData.name}</div>
 <div class="top-wrapper">
+<div class="author-section">
+<img class="author-avatar" src="avatar.jpg">
+<div>
+<div class="author-name"><span class="author-label">作者</span>${novelData.authorName}</div>
+<div class="author-desc">${novelData.authorBio}</div>
+</div>
+</div>
+<div class="split-line"></div>
 <div class="novel-section">
 <img class="novel-cover" src="cover.jpg">
 <div class="novel-info">
@@ -480,14 +489,6 @@ body.night .chapter-item{background:#333;color:#ccc}
 <div class="novel-stat">${novelData.wordCount}万字</div>
 <div class="novel-update">最近更新：${novelData.lastChapter}</div>
 <a href="chapter_1.html" class="btn-read">开始阅读</a>
-</div>
-</div>
-<div class="split-line"></div>
-<div class="author-section">
-<img class="author-avatar" src="avatar.jpg">
-<div>
-<div class="author-name"><span class="author-label">作者</span>${novelData.authorName}</div>
-<div class="author-desc">${novelData.authorBio}</div>
 </div>
 </div>
 </div>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Blog - 小说博客</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- AOS 动画库 -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#666666',
+                        background: '#f8f8f8',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            }
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+            .hover-scale:hover {
+                transform: scale(1.03);
+            }
+            .book-card {
+                transition: all 0.3s ease;
+            }
+            .book-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            }
+            .nav-active {
+                color: #000;
+                font-weight: 600;
+                position: relative;
+            }
+            .nav-active::after {
+                content: '';
+                position: absolute;
+                bottom: -4px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: #000;
+            }
+            .dark .nav-active{color:#fff;}
+            .dark .nav-active::after{background:#fff;}
+        }
+        .dark{
+            color-scheme: dark;
+            --tw-bg-opacity: 1;
+            background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-background dark:bg-gray-900 font-sans text-primary dark:text-gray-100 transition-colors duration-300">
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm z-50 border-b border-gray-100 dark:border-gray-700">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <span class="text-xl font-bold tracking-tight">小说博客</span>
+            </a>
+            
+            <!-- PC端导航：首页 热门 写作 工具 关于 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="nav-active transition-colors">首页</a>
+                <a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">热门</a>
+                <a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">写作</a>
+                <a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">工具</a>
+                <a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">关于</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">
+                    <i class="fa fa-search text-lg"></i>
+                </button>
+                <!-- 暗黑模式切换 -->
+                <button id="darkToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                    <i class="fa fa-moon-o dark:hidden"></i>
+                    <i class="fa fa-sun-o hidden dark:inline"></i>
+                </button>
+                <!-- 后台编辑入口 -->
+                <a href="editor.html" class="hidden md:block text-sm bg-black dark:bg-white dark:text-black text-white px-3 py-1 rounded">
+                    编辑
+                </a>
+                <button class="md:hidden text-primary dark:text-white" id="mobile-menu-button">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700" id="mobile-menu">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#" class="py-2 nav-active">首页</a>
+                <a href="#" class="py-2 text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">热门</a>
+                <a href="#" class="py-2 text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">写作</a>
+                <a href="#" class="py-2 text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">工具</a>
+                <a href="#" class="py-2 text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors">关于</a>
+                <a href="editor.html" class="py-2 text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">后台编辑</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="pt-24 pb-16">
+        <!-- 英雄区域 -->
+        <section class="container mx-auto px-4 mb-16">
+            <div class="max-w-3xl mx-auto text-center" data-aos="fade-up" data-aos-duration="1000">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight" id="hero-title">探索文学的无限可能</h1>
+                <p class="text-lg md:text-xl text-secondary dark:text-gray-400 mb-8" id="hero-desc">发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#featured" class="px-8 py-3 bg-primary dark:bg-white dark:text-black text-white rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">开始探索</a>
+                    <a href="#" class="px-8 py-3 border border-primary dark:border-gray-400 text-primary dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">订阅更新</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 精选小说 自动渲染 -->
+        <section id="featured" class="container mx-auto px-4 mb-16">
+            <h2 class="text-3xl font-bold mb-10 text-center dark:text-white" data-aos="fade-up">精选小说</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="novels-container"></div>
+        </section>
+
+        <!-- 最新写作干货 自动渲染 -->
+        <section class="container mx-auto px-4 mb-16">
+            <h2 class="text-3xl font-bold mb-10 text-center dark:text-white" data-aos="fade-up">写作干货</h2>
+            <div class="space-y-12" id="skill-container"></div>
+        </section>
+
+        <!-- 订阅区域 -->
+        <section class="bg-primary dark:bg-gray-700 text-white py-16" data-aos="fade-up">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-4">订阅更新</h2>
+                    <p class="mb-8 opacity-90">获取最新小说推荐、写作教程、网文工具资源</p>
+                    <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+                        <input type="email" placeholder="输入你的邮箱" class="flex-1 px-4 py-3 rounded-md text-primary focus:outline-none focus:ring-2 focus:ring-white">
+                        <button type="submit" class="px-6 py-3 bg-white text-primary rounded-md hover:bg-gray-100 transition-colors">
+                            立即订阅
+                        </button>
+                    </form>
+                    <p class="text-sm mt-4 opacity-70">尊重隐私，绝不群发骚扰</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">关于本站</h3>
+                    <p class="text-secondary dark:text-gray-400 mb-4">专注小说分享、写作教程、网文工具的个人博客。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">导航链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">首页</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">热门</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">写作</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">工具</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">关于</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">内容分类</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">玄幻小说</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">都市言情</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">悬疑推理</a></li>
+                        <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">写作教程</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">联系我们</h3>
+                    <p class="text-secondary dark:text-gray-400">邮箱：contact@novelblog.com</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 dark:border-gray-700 mt-12 pt-8 text-center text-secondary dark:text-gray-400 text-sm">
+                <p>© 2026 小说博客 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script>
+        AOS.init();
+        // 移动端菜单
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 订阅表单
+        document.querySelector('form').addEventListener('submit', e => {
+            e.preventDefault();
+            alert('订阅成功，感谢关注！');
+            e.target.reset();
+        });
+
+        // 暗黑模式
+        const darkToggle = document.getElementById('darkToggle');
+        if(localStorage.getItem('dark') === '1' || 
+           (!localStorage.getItem('dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+            document.documentElement.classList.add('dark');
+        }
+        darkToggle.onclick = () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('dark', document.documentElement.classList.contains('dark') ? '1' : '0');
+        };
+
+        // 默认初始数据
+        const defaultData = {
+            heroTitle: "探索文学的无限可能",
+            heroDesc: "发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
+            novels: [
+                {
+                    title:"玄幻修仙小说",
+                    type:"玄幻",
+                    author:"佚名作者",
+                    desc:"逆天改命，踏碎虚空，一段热血修仙之路。",
+                    cover:"",
+                    chapters:[
+                        {"title":"第一章 开篇","content":"第一章正文内容，在这里写小说正文......"}
+                    ]
+                },
+                {
+                    title:"都市悬疑故事",
+                    type:"悬疑",
+                    author:"热门作者",
+                    desc:"都市迷雾重重，真相藏于细微之间。",
+                    cover:"",
+                    chapters:[
+                        {"title":"第一章 迷雾","content":"第一章正文内容......"}
+                    ]
+                },
+                {
+                    title:"都市言情小说",
+                    type:"言情",
+                    author:"人气作家",
+                    desc:"人间烟火，遇见你便是余生温柔。",
+                    cover:"",
+                    chapters:[
+                        {"title":"第一章 遇见","content":"第一章正文内容......"}
+                    ]
+                }
+            ],
+            skillTitle:"小说开篇怎么写才能留住读者",
+            skillType:"写作技巧",
+            skillDesc:"分享新手写小说必备开篇技巧，快速抓住读者眼球，提高留存率。",
+            skillDate:"2026-04-30"
+        };
+
+        // 读取本地数据
+        let data = JSON.parse(localStorage.getItem("novelBlogData") || JSON.stringify(defaultData));
+
+        // 渲染首页内容
+        function renderPage(){
+            // 英雄区
+            document.getElementById("hero-title").innerText = data.heroTitle;
+            document.getElementById("hero-desc").innerText = data.heroDesc;
+
+            // 渲染小说卡片
+            let novelHtml = "";
+            data.novels.forEach((item, idx)=>{
+                let cover = item.cover || "https://picsum.photos/400/600";
+                novelHtml += `
+                <div class="book-card bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm" data-aos="fade-up" data-aos-delay="${idx*100}">
+                    <div class="relative aspect-[2/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                        <img src="${cover}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">${item.type}</span>
+                        <h3 class="text-xl font-bold mt-1 mb-2 dark:text-white">${item.title}</h3>
+                        <p class="text-secondary dark:text-gray-400 mb-4">${item.author}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">${item.desc}</p>
+                        <button onclick="goRead(${idx})" class="w-full py-2 border border-primary dark:border-gray-500 text-primary dark:text-gray-300 rounded hover:bg-primary dark:hover:bg-white dark:hover:text-black hover:text-white transition-colors">
+                            阅读详情
+                        </button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById("novels-container").innerHTML = novelHtml;
+
+            // 渲染写作干货
+            let skillHtml = `
+            <div class="flex flex-col md:flex-row gap-8 items-center bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm" data-aos="fade-up">
+                <div class="md:w-1/3">
+                    <div class="aspect-video overflow-hidden rounded-md bg-gray-100 dark:bg-gray-700"></div>
+                </div>
+                <div class="md:w-2/3">
+                    <span class="text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">${data.skillType}</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-3 dark:text-white">${data.skillTitle}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">${data.skillDesc}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-secondary dark:text-gray-400">${data.skillDate}</span>
+                        <button class="text-primary dark:text-gray-300 hover:text-secondary dark:hover:text-gray-200 transition-colors flex items-center gap-2">
+                            阅读更多 <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+            document.getElementById("skill-container").innerHTML = skillHtml;
+        }
+
+        // 跳转到阅读页
+        function goRead(idx){
+            localStorage.setItem('readNovelIndex', idx);
+            location.href = "read.html";
+        }
+
+        // 初始化渲染
+        renderPage();
+    </script>
+</body>
+</html>

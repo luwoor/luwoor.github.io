@@ -170,13 +170,11 @@
             const targetRatio = targetWidth / targetHeight;
             let drawWidth, drawHeight, offsetX, offsetY;
             if (imgRatio > targetRatio) {
-              // 图片更宽，以高度为准
               drawHeight = targetHeight;
               drawWidth = img.width * (targetHeight / img.height);
               offsetX = (drawWidth - targetWidth) / 2;
               offsetY = 0;
             } else {
-              // 图片更高，以宽度为准
               drawWidth = targetWidth;
               drawHeight = img.height * (targetWidth / img.width);
               offsetX = 0;
@@ -184,7 +182,6 @@
             }
             ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
 
-            // 同时获取 dataURL 和 blob
             const dataURL = canvas.toDataURL('image/jpeg', quality);
             canvas.toBlob((blob) => {
               resolve({ dataURL, blob });
@@ -288,7 +285,6 @@
       document.getElementById("previewWordCount").innerText = novelData.wordCount + "万字";
       document.getElementById("previewChapterCount").innerText = novelData.chapters.length;
 
-      // 封面/头像预览（如果有已处理图片则展示）
       document.getElementById("previewCover").src = novelData.cover ? novelData.cover.dataURL : "";
       document.getElementById("previewAvatar").src = novelData.authorAvatar ? novelData.authorAvatar.dataURL : "";
 
@@ -384,6 +380,7 @@
         `<a class='chapter-item' href='chapter_${idx + 1}.html'>${escapeHtml(chap.title)}</a>`
       ).join("");
 
+      // 注意：下面所有 </script> 都写成了 <\/script>，避免提前关闭当前脚本
       return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -486,7 +483,7 @@
       const btn = event.target;
       btn.textContent = document.body.classList.contains('night') ? '☀' : '◐';
     }
-  </script>
+  <\/script>
 </body>
 </html>`;
     }
@@ -545,7 +542,7 @@
       const btn = event.target;
       btn.textContent = document.body.classList.contains('night') ? '☀' : '◐';
     }
-  </script>
+  <\/script>
 </body>
 </html>`;
     }

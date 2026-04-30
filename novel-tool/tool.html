@@ -23,12 +23,10 @@
         .preview-panel {max-width:1000px;margin:0 auto;}
         .bread-nav {font-size:14px;color:#666;padding:15px 20px;}
 
-        /* 要求1：头部和作品简介之间 保留间距 隐藏下边框线 */
         .top-wrapper {
             display:flex;
             align-items:center;
             padding:30px 20px;
-            /* 隐藏原横线 */
             border-bottom: none;
             margin-bottom: 30px;
         }
@@ -50,7 +48,6 @@
         .author-label {display:inline-block;background:#ffb726;color:#fff;padding:2px 6px;border-radius:3px;font-size:12px;}
         .author-desc {font-size:12px;color:#888;max-width:160px;line-height:1.5;}
 
-        /* 要求4：作品简介和目录之间 保留间距 隐藏横线 */
         .section {
             padding:20px 20px 30px 20px;
             border-bottom: none;
@@ -63,7 +60,6 @@
             align-items:center;
             margin-bottom:15px;
             padding-bottom:15px;
-            /* 要求2、3：标题和正文中间加分隔线 */
             border-bottom: 1px solid #eee;
         }
         .section-title {font-size:20px;font-weight:bold;}
@@ -76,11 +72,47 @@
         .float-nav {position:fixed;right:20px;bottom:30px;display:flex;flex-direction:column;gap:12px;z-index:999;}
         .float-btn {background:transparent;border:none;font-size:22px;cursor:pointer;color:#666;padding:5px;}
         .float-btn:hover {color:#ff6b35;}
+
+        /* ============================================== */
+        /* ✅ 手机端最终优化版（你要的全部在这里） */
+        /* ============================================== */
         @media (max-width:768px){
-            .top-wrapper{flex-direction:column;align-items:center;padding:20px;}
-            .author-section{order:1;margin-bottom:20px;}
-            .split-line{display:none}
-            .novel-section{order:2;width:100%}
+            .top-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+            .novel-section {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .split-line {display:none !important;}
+
+            /* 作者区块：封面下方、简介上方、左对齐、无头像、同行显示 */
+            .author-section {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: left;
+                margin: 0 0 20px 0;
+                padding: 0;
+            }
+            .author-avatar {display:none !important;}
+            .author-name {
+                justify-content: flex-start;
+                margin-bottom: 0;
+            }
+            .author-desc {
+                display: inline;
+                margin-left: 8px;
+                line-height: 1;
+            }
+
             .chapter-list{grid-template-columns:1fr;}
         }
     </style>
@@ -372,8 +404,42 @@ body{background:#fff;color:#333;transition:all 0.3s}
 body.night{background:#1a1a1a;color:#ccc}
 body.night .section,body.night .top-wrapper{border-color:#444}
 body.night .chapter-item{background:#333;color:#ccc}
+
 @media (max-width:768px){
-    .top-wrapper{flex-direction:column}.author-section{order:1;margin-bottom:20px;}.split-line{display:none}.novel-section{order:2;width:100%}.chapter-list{grid-template-columns:1fr}
+    .top-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+    .novel-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .split-line {display:none !important;}
+    .author-section {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        margin: 0 0 20px 0;
+        padding: 0;
+    }
+    .author-avatar {display:none !important;}
+    .author-name {
+        justify-content: flex-start;
+        margin-bottom: 0;
+    }
+    .author-desc {
+        display: inline;
+        margin-left: 8px;
+        line-height: 1;
+    }
+    .chapter-list{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -404,7 +470,9 @@ body.night .chapter-item{background:#333;color:#ccc}
 </div>
 </div>
 <div class="section">
+<div class="section-head">
 <div class="section-title">作品简介</div>
+</div>
 <div class="intro-text">${novelData.intro}</div>
 </div>
 <div class="section">

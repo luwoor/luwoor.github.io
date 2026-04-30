@@ -5,60 +5,313 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>小说分章导出器 - GitHub专用</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
-    html { scroll-behavior: smooth; }
-    body { background: #fff; color: #333; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-    .config-panel { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
-    .config-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #333; }
-    .config-item { margin-bottom: 15px; }
-    .config-item label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #fff;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .config-panel {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .config-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .config-item {
+      margin-bottom: 15px;
+    }
+
+    .config-item label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
     .config-item input,
-    .config-item textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-    .config-item textarea { min-height: 100px; resize: vertical; }
-    .btn-group { display: flex; gap: 15px; margin-top: 20px; }
-    .btn { padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; transition: opacity 0.3s; }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-primary { background: #ff6b35; color: #fff; }
-    .btn-success { background: #28a745; color: #fff; }
-    .preview-panel { max-width: 1000px; margin: 0 auto; }
-    .bread-nav { font-size: 14px; color: #666; padding: 15px 20px; }
-    .top-wrapper { display: flex; align-items: center; padding: 30px 20px; border-bottom: 1px solid #eee; }
-    .novel-section { flex: 2; display: flex; align-items: center; gap: 20px; }
-    .split-line { width: 1px; height: 140px; background: #eee; margin: 0 10px; }
-    .author-section { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .novel-cover { width: 130px; height: 170px; border-radius: 8px; object-fit: cover; background: #f0f0f0; }
-    .novel-info { text-align: left; }
-    .novel-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; }
-    .novel-tags { display: flex; gap: 8px; margin-bottom: 10px; }
-    .tag { background: #f0f0f0; padding: 3px 8px; border-radius: 4px; font-size: 12px; color: #666; }
-    .tag-status { color: #ff6b35; border: 1px solid #ff6b35; background: #fff8f0; }
-    .novel-stat { font-size: 14px; color: #666; margin-bottom: 6px; }
-    .novel-update { font-size: 13px; color: #888; margin-bottom: 12px; }
-    .btn-read { background: #ff6b35; color: #fff; padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer; }
-    .author-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; border: 2px solid #ff6b35; }
-    .author-label { display: inline-block; background: #ff6b35; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin-right: 6px; }
-    .author-name { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-    .author-desc { font-size: 12px; color: #888; max-width: 160px; }
-    .section { padding: 20px; border-bottom: 1px solid #eee; }
-    .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .section-title { font-size: 20px; font-weight: bold; }
-    .intro-text { line-height: 1.7; color: #444; }
-    .chapter-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .chapter-item { padding: 8px 12px; background: #f9f9f9; border-radius: 6px; font-size: 14px; }
-    .float-nav { position: fixed; right: 20px; bottom: 30px; display: flex; flex-direction: column; gap: 12px; z-index: 999; }
-    .float-btn { background: transparent; border: none; font-size: 22px; cursor: pointer; color: #666; padding: 5px; }
-    .float-btn:hover { color: #ff6b35; }
+    .config-item textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .config-item textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: #ff6b35;
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: #fff;
+    }
+
+    .preview-panel {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .bread-nav {
+      font-size: 14px;
+      color: #666;
+      padding: 15px 20px;
+    }
+
+    .top-wrapper {
+      display: flex;
+      align-items: center;
+      padding: 30px 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .novel-section {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .split-line {
+      width: 1px;
+      height: 140px;
+      background: #eee;
+      margin: 0 10px;
+    }
+
+    .author-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .novel-cover {
+      width: 130px;
+      height: 170px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+
+    .novel-info {
+      text-align: left;
+    }
+
+    .novel-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .novel-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      background: #f0f0f0;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .tag-status {
+      color: #ff6b35;
+      border: 1px solid #ff6b35;
+      background: #fff8f0;
+    }
+
+    .novel-stat {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .novel-update {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .btn-read {
+      background: #ff6b35;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .author-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #f0f0f0;
+      margin-bottom: 10px;
+      border: 2px solid #ff6b35;
+    }
+
+    .author-label {
+      display: inline-block;
+      background: #ff6b35;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .author-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .author-desc {
+      font-size: 12px;
+      color: #888;
+      max-width: 160px;
+    }
+
+    .section {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .intro-text {
+      line-height: 1.7;
+      color: #444;
+    }
+
+    .chapter-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .chapter-item {
+      padding: 8px 12px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .float-nav {
+      position: fixed;
+      right: 20px;
+      bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 999;
+    }
+
+    .float-btn {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #666;
+      padding: 5px;
+    }
+
+    .float-btn:hover {
+      color: #ff6b35;
+    }
+
     @media (max-width: 768px) {
-      .top-wrapper { flex-direction: column; align-items: center; padding: 20px; }
-      .author-section { order: 1; margin-bottom: 20px; }
-      .split-line { display: none; }
-      .novel-section { order: 2; width: 100%; }
-      .novel-info { text-align: left; }
-      .chapter-list { grid-template-columns: 1fr; }
+      .top-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .author-section {
+        order: 1;
+        margin-bottom: 20px;
+      }
+
+      .split-line {
+        display: none;
+      }
+
+      .novel-section {
+        order: 2;
+        width: 100%;
+      }
+
+      .novel-info {
+        text-align: left;
+      }
+
+      .chapter-list {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="float-nav">
     <button class="float-btn" onclick="window.scrollTo(0,0)">↑</button>
@@ -69,7 +322,7 @@
     <div class="config-panel">
       <div class="config-title">📖 小说分章导出器</div>
       <div class="config-item">
-        <label>小说封面 (自动裁切为 600×800)</label>
+        <label>小说封面</label>
         <input type="file" id="coverInput" accept="image/*">
       </div>
       <div class="config-item">
@@ -85,7 +338,7 @@
         <textarea id="novelIntro"></textarea>
       </div>
       <div class="config-item">
-        <label>作者头像 (自动裁切为 200×200)</label>
+        <label>作者头像</label>
         <input type="file" id="authorAvatarInput" accept="image/*">
       </div>
       <div class="config-item">
@@ -102,7 +355,7 @@
       </div>
       <div class="btn-group">
         <button class="btn btn-primary" onclick="updatePreview()">更新预览</button>
-        <button class="btn btn-success" id="exportBtn" onclick="exportZip()">导出整本书(分章ZIP)</button>
+        <button class="btn btn-success" onclick="exportZip()">导出整本书(分章ZIP)</button>
       </div>
     </div>
 
@@ -110,7 +363,7 @@
       <div class="bread-nav">首页 / <span id="previewBreadName">小说名称</span></div>
       <div class="top-wrapper">
         <div class="novel-section">
-          <img class="novel-cover" id="previewCover" alt="封面预览">
+          <img class="novel-cover" id="previewCover">
           <div class="novel-info">
             <div class="novel-title" id="previewName">小说名称</div>
             <div class="novel-tags" id="previewTags"></div>
@@ -121,7 +374,7 @@
         </div>
         <div class="split-line"></div>
         <div class="author-section">
-          <img class="author-avatar" id="previewAvatar" alt="作者头像">
+          <img class="author-avatar" id="previewAvatar">
           <div class="author-name">
             <span class="author-label">作者</span>
             <span id="previewAuthorName">作者名</span>
@@ -148,60 +401,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
-    // ========== 工具函数 ==========
-    function escapeHtml(text) {
-      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-    }
-
-    // 图片处理：居中裁切到目标尺寸，返回 dataURL 和 blob
-    function processImage(file, targetWidth, targetHeight, quality = 0.85) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-            const ctx = canvas.getContext('2d');
-
-            // 计算 cover 模式的绘制参数
-            const imgRatio = img.width / img.height;
-            const targetRatio = targetWidth / targetHeight;
-            let drawWidth, drawHeight, offsetX, offsetY;
-            if (imgRatio > targetRatio) {
-              drawHeight = targetHeight;
-              drawWidth = img.width * (targetHeight / img.height);
-              offsetX = (drawWidth - targetWidth) / 2;
-              offsetY = 0;
-            } else {
-              drawWidth = targetWidth;
-              drawHeight = img.height * (targetWidth / img.width);
-              offsetX = 0;
-              offsetY = (drawHeight - targetHeight) / 2;
-            }
-            ctx.drawImage(img, -offsetX, -offsetY, drawWidth, drawHeight);
-
-            const dataURL = canvas.toDataURL('image/jpeg', quality);
-            canvas.toBlob((blob) => {
-              resolve({ dataURL, blob });
-            }, 'image/jpeg', quality);
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // ========== 小说数据 ==========
+    // 全局小说数据
     const novelData = {
-      cover: null,          // { dataURL, blob } 或 null
+      cover: "",
       name: "",
       tags: [],
       intro: "",
-      authorAvatar: null,   // { dataURL, blob } 或 null
+      authorAvatar: "",
       authorName: "",
       authorBio: "",
       chapters: [],
@@ -209,45 +415,50 @@
       lastChapter: ""
     };
 
-    // ========== 封面上传（裁切至 600x800） ==========
-    document.getElementById("coverInput").addEventListener("change", async function(e) {
+    // 封面上传
+    document.getElementById("coverInput").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
-      try {
-        novelData.cover = await processImage(file, 600, 800, 0.85);
-        document.getElementById("previewCover").src = novelData.cover.dataURL;
-      } catch (err) {
-        alert("封面处理失败：" + err.message);
-      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        novelData.cover = e.target.result;
+        document.getElementById("previewCover").src = novelData.cover;
+      };
+      reader.readAsDataURL(file);
     });
 
-    // ========== 作者头像上传（裁切至 200x200） ==========
-    document.getElementById("authorAvatarInput").addEventListener("change", async function(e) {
+    // 作者头像上传
+    document.getElementById("authorAvatarInput").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
-      try {
-        novelData.authorAvatar = await processImage(file, 200, 200, 0.85);
-        document.getElementById("previewAvatar").src = novelData.authorAvatar.dataURL;
-      } catch (err) {
-        alert("头像处理失败：" + err.message);
-      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        novelData.authorAvatar = e.target.result;
+        document.getElementById("previewAvatar").src = novelData.authorAvatar;
+      };
+      reader.readAsDataURL(file);
     });
 
-    // ========== TXT 导入解析 ==========
-    document.getElementById("txtInput").addEventListener("change", function(e) {
+    // TXT 导入解析
+    document.getElementById("txtInput").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
+
+      // 自动填充文件名
       if (!document.getElementById("novelName").value.trim()) {
         document.getElementById("novelName").value = file.name.replace(/\.txt$/i, "");
       }
+
       const reader = new FileReader();
       reader.onload = e => parseChapters(e.target.result);
       reader.readAsText(file, "UTF-8");
     });
 
+    // 解析章节
     function parseChapters(txt) {
-      const reg = /(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/; // 无g标志
+      const reg = /(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/g;
       const lines = txt.split("\n").filter(line => line.trim());
+      
       novelData.chapters = [];
       let currentChapter = null;
       let allText = "";
@@ -262,14 +473,18 @@
         }
         allText += line;
       });
+
       if (currentChapter) novelData.chapters.push(currentChapter);
       novelData.wordCount = Math.round(allText.replace(/\s/g, "").length / 10000);
-      novelData.lastChapter = novelData.chapters.length ? novelData.chapters.at(-1).title : "";
+      novelData.lastChapter = novelData.chapters.length 
+        ? novelData.chapters.at(-1).title 
+        : "";
+
       alert("✅ 解析完成：共 " + novelData.chapters.length + " 章");
       updatePreview();
     }
 
-    // ========== 更新预览 ==========
+    // 更新预览界面
     function updatePreview() {
       novelData.name = document.getElementById("novelName").value;
       novelData.tags = document.getElementById("novelTags").value.split(" ").filter(t => t.trim());
@@ -285,62 +500,44 @@
       document.getElementById("previewWordCount").innerText = novelData.wordCount + "万字";
       document.getElementById("previewChapterCount").innerText = novelData.chapters.length;
 
-      document.getElementById("previewCover").src = novelData.cover ? novelData.cover.dataURL : "";
-      document.getElementById("previewAvatar").src = novelData.authorAvatar ? novelData.authorAvatar.dataURL : "";
-
-      // 标签
+      // 渲染标签
       const tagsContainer = document.getElementById("previewTags");
       tagsContainer.innerHTML = "";
       novelData.tags.forEach(tag => {
         const isStatus = tag.includes("完结") || tag.includes("连载");
-        const span = document.createElement("span");
-        span.className = isStatus ? "tag tag-status" : "tag";
-        span.textContent = tag;
-        tagsContainer.appendChild(span);
+        const cls = isStatus ? "tag tag-status" : "tag";
+        tagsContainer.innerHTML += `<span class="${cls}">${tag}</span>`;
       });
 
-      // 章节列表
+      // 渲染章节列表
       const chapterList = document.getElementById("previewChapters");
       if (novelData.chapters.length === 0) {
         chapterList.innerHTML = "<div class='chapter-item'>请导入TXT</div>";
         return;
       }
+
       chapterList.innerHTML = novelData.chapters
-        .map(chap => `<div class='chapter-item'>${escapeHtml(chap.title)}</div>`)
+        .map(chap => `<div class='chapter-item'>${chap.title}</div>`)
         .join("");
     }
 
-    // ========== 导出 ZIP ==========
-    async function exportZip() {
+    // 导出 ZIP
+    function exportZip() {
       if (!novelData.name || novelData.chapters.length === 0) {
         alert("⚠️ 请先填写小说名称 + 导入TXT文件！");
         return;
       }
-      const exportBtn = document.getElementById("exportBtn");
-      const originalText = exportBtn.innerText;
-      exportBtn.disabled = true;
-      exportBtn.innerText = "打包中...";
 
-      try {
-        const zip = new JSZip();
+      const zip = new JSZip();
+      zip.file("index.html", generateIndexPage());
 
-        // 添加图片文件（如果有）
-        if (novelData.cover && novelData.cover.blob) {
-          zip.file("cover.jpg", novelData.cover.blob);
-        }
-        if (novelData.authorAvatar && novelData.authorAvatar.blob) {
-          zip.file("avatar.jpg", novelData.authorAvatar.blob);
-        }
+      novelData.chapters.forEach((chap, idx) => {
+        const prevIdx = idx > 0 ? idx - 1 : null;
+        const nextIdx = idx < novelData.chapters.length - 1 ? idx + 1 : null;
+        zip.file(`chapter_${idx + 1}.html`, generateChapterPage(chap, idx, prevIdx, nextIdx));
+      });
 
-        // 生成页面（img src 直接使用文件名）
-        zip.file("index.html", generateIndexPage());
-        novelData.chapters.forEach((chap, idx) => {
-          const prev = idx > 0 ? idx - 1 : null;
-          const next = idx < novelData.chapters.length - 1 ? idx + 1 : null;
-          zip.file(`chapter_${idx + 1}.html`, generateChapterPage(chap, idx, prev, next));
-        });
-
-        const content = await zip.generateAsync({ type: "blob" });
+      zip.generateAsync({ type: "blob" }).then(content => {
         const url = URL.createObjectURL(content);
         const a = document.createElement("a");
         a.href = url;
@@ -349,44 +546,17 @@
         a.click();
         document.body.removeChild(a);
         alert("✅ 导出成功！解压后打开 index.html 即可阅读！");
-      } catch (err) {
-        alert("❌ 导出失败：" + err.message);
-      } finally {
-        exportBtn.disabled = false;
-        exportBtn.innerText = originalText;
-      }
+      });
     }
 
-    // ========== 生成目录页 ==========
+    // 生成目录页
     function generateIndexPage() {
-      const name = escapeHtml(novelData.name);
-      const intro = escapeHtml(novelData.intro);
-      const authorName = escapeHtml(novelData.authorName);
-      const authorBio = escapeHtml(novelData.authorBio);
-      const wordCount = novelData.wordCount;
-      const lastChapter = escapeHtml(novelData.lastChapter);
-      const chapterCount = novelData.chapters.length;
-
-      // 图片 src：有图用文件名，无图留空
-      const coverSrc = novelData.cover ? "cover.jpg" : "";
-      const avatarSrc = novelData.authorAvatar ? "avatar.jpg" : "";
-
-      const tagsHtml = novelData.tags.map(tag => {
-        const isStatus = tag.includes("完结") || tag.includes("连载");
-        return `<span class="${isStatus ? 'tag tag-status' : 'tag'}">${escapeHtml(tag)}</span>`;
-      }).join("");
-
-      const chaptersHtml = novelData.chapters.map((chap, idx) =>
-        `<a class='chapter-item' href='chapter_${idx + 1}.html'>${escapeHtml(chap.title)}</a>`
-      ).join("");
-
-      // 注意：下面所有 </script> 都写成了 <\/script>，避免提前关闭当前脚本
       return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${name} - 目录</title>
+  <meta name="viewport" content="width=device-width,initial-scalecale=1.0">
+  <title>${novelData.name} - 目录</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Microsoft YaHei'}
     html{scroll-behavior:smooth}
@@ -446,34 +616,41 @@
     <div class='bread-nav'>小说目录</div>
     <div class='top-wrapper'>
       <div class='novel-section'>
-        <img class='novel-cover' src='${coverSrc}'>
+        <img class='novel-cover' src='${novelData.cover}'>
         <div class='novel-info'>
-          <div class='novel-title'>${name}</div>
-          <div class='novel-tags'>${tagsHtml}</div>
-          <div class='novel-stat'>${wordCount}万字</div>
-          <div class='novel-update'>最近更新：${lastChapter}</div>
+          <div class='novel-title'>${novelData.name}</div>
+          <div class='novel-tags'>
+            ${novelData.tags.map(tag => {
+              const isStatus = tag.includes("完结") || tag.includes("连载");
+              return `<span class="${isStatus ? 'tag tag-status' : 'tag'}">${tag}</span>`;
+            }).join("")}
+          </div>
+          <div class='novel-stat'>${novelData.wordCount}万字</div>
+          <div class='novel-update'>最近更新：${novelData.lastChapter}</div>
           <a href='chapter_1.html' class='btn-read'>开始阅读</a>
         </div>
       </div>
       <div class='split-line'></div>
       <div class='author-section'>
-        <img class='author-avatar' src='${avatarSrc}'>
+        <img class='author-avatar' src='${novelData.authorAvatar}'>
         <div class='author-name'>
-          <span class='author-label'>作者</span>${authorName}
+          <span class='author-label'>作者</span>${novelData.authorName}
         </div>
-        <div class='author-desc'>${authorBio}</div>
+        <div class='author-desc'>${novelData.authorBio}</div>
       </div>
     </div>
     <div class='section'>
       <div class='section-title'>作品简介</div>
-      <div class='intro-text'>${intro}</div>
+      <div class='intro-text'>${novelData.intro}</div>
     </div>
     <div class='section'>
       <div class='section-head'>
-        <div class='section-title'>全部章节 · ${chapterCount}章</div>
+        <div class='section-title'>全部章节 · ${novelData.chapters.length}章</div>
       </div>
       <div class='chapter-list'>
-        ${chaptersHtml}
+        ${novelData.chapters.map((chap, idx) => 
+          `<a class='chapter-item' href='chapter_${idx + 1}.html'>${chap.title}</a>`
+        ).join("")}
       </div>
     </div>
   </div>
@@ -483,25 +660,19 @@
       const btn = event.target;
       btn.textContent = document.body.classList.contains('night') ? '☀' : '◐';
     }
-  <\/script>
+  </script>
 </body>
 </html>`;
     }
 
-    // ========== 生成章节页 ==========
+    // 生成章节页
     function generateChapterPage(chap, idx, prevIdx, nextIdx) {
-      const name = escapeHtml(novelData.name);
-      const title = escapeHtml(chap.title);
-      const content = escapeHtml(chap.content);
-      const prevLink = prevIdx !== null ? `<a href='chapter_${prevIdx + 1}.html'>上一章</a>` : `<a href='index.html'>返回目录</a>`;
-      const nextLink = nextIdx !== null ? `<a href='chapter_${nextIdx + 1}.html'>下一章</a>` : `<a href='index.html'>返回目录</a>`;
-
       return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} - ${name}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>${chap.title} - ${novelData.name}</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Microsoft YaHei'}
     html{scroll-behavior:smooth}
@@ -528,12 +699,12 @@
     <button class='float-btn' onclick='window.scrollTo(0,document.body.scrollHeight)'>↓</button>
   </div>
   <div class='read-container'>
-    <div class='read-title'>${title}</div>
-    <div class='read-content'>${content}</div>
+    <div class='read-title'>${chap.title}</div>
+    <div class='read-content'>${chap.content}</div>
     <div class='read-nav'>
-      ${prevLink}
+      ${prevIdx !== null ? `<a href='chapter_${prevIdx + 1}.html'>上一章</a>` : `<a href='index.html'>返回目录</a>`}
       <a href='index.html'>返回目录</a>
-      ${nextLink}
+      ${nextIdx !== null ? `<a href='chapter_${nextIdx + 1}.html'>下一章</a>` : `<a href='index.html'>返回目录</a>`}
     </div>
   </div>
   <script>
@@ -542,7 +713,7 @@
       const btn = event.target;
       btn.textContent = document.body.classList.contains('night') ? '☀' : '◐';
     }
-  <\/script>
+  </script>
 </body>
 </html>`;
     }

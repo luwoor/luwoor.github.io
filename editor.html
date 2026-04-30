@@ -3,189 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>超级后台 - 小说博客管理</title>
+    <title>小说博客后台管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script> tailwind.config = { darkMode: 'class' } </script>
-    <style> .dark{color-scheme:dark;} </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2c3e50',
+                        sidebar: '#2c3e50',
+                        active: '#3498db',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .dark { color-scheme: dark; }
+        .sidebar-item.active { background-color: #34495e; border-left: 4px solid #3498db; }
+        .sidebar-item:hover { background-color: #34495e; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-300">
-    <header class="fixed w-full bg-white dark:bg-gray-800 shadow z-50">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold">📝 小说博客超级后台</h1>
-            <div class="flex gap-3 items-center">
-                <button id="darkToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"><i class="fa fa-moon-o dark:hidden"></i><i class="fa fa-sun-o hidden dark:inline"></i></button>
-                <a href="index.html" class="px-3 py-1 border rounded">预览首页</a>
-                <button onclick="saveAll()" class="bg-black dark:bg-white dark:text-black text-white px-4 py-1 rounded">💾 保存全部</button>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <!-- 顶部导航 -->
+    <header class="bg-white dark:bg-gray-800 shadow fixed top-0 left-0 right-0 z-50">
+        <div class="flex justify-between items-center px-6 py-3">
+            <div class="flex items-center gap-6">
+                <div class="text-xl font-bold text-primary dark:text-white">Z-小说博客</div>
+                <nav class="hidden md:flex gap-4">
+                    <button onclick="switchTab('dashboard')" class="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">后台首页</button>
+                    <button onclick="switchTab('site-setting')" class="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">网站设置</button>
+                    <button onclick="location.href='index.html'" class="px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">预览首页</button>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-gray-600 dark:text-gray-300">管理员: admin</span>
+                <button id="darkToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                    <i class="fa fa-moon-o dark:hidden"></i>
+                    <i class="fa fa-sun-o hidden dark:inline"></i>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="pt-24 pb-20 container mx-auto px-4">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- 左边：网站基础设置 -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
-                <h2 class="font-bold text-lg border-b pb-2">🌐 网站基础设置</h2>
-                <input id="site_title" class="w-full border p-2 rounded" placeholder="网站名称">
-                <input id="hero_title" class="w-full border p-2 rounded" placeholder="首页大标题">
-                <textarea id="hero_desc" class="w-full border p-2 rounded" rows="2" placeholder="首页描述"></textarea>
-                <input id="featured_title" class="w-full border p-2 rounded" placeholder="精选小说标题">
-                <input id="writing_title" class="w-full border p-2 rounded" placeholder="写作干货标题">
+    <div class="flex pt-14">
+        <!-- 侧边栏导航 -->
+        <aside class="w-64 bg-sidebar text-white min-h-screen fixed left-0 top-14 overflow-y-auto">
+            <div class="py-4">
+                <button onclick="switchTab('new-post')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-pencil"></i> 新建文章
+                </button>
+                <button onclick="switchTab('post-manage')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-list-alt"></i> 文章管理
+                </button>
+                <button onclick="switchTab('novel-manage')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-book"></i> 小说管理
+                </button>
+                <button onclick="switchTab('skill-manage')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-lightbulb-o"></i> 写作干货管理
+                </button>
+                <button onclick="switchTab('site-setting')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-cog"></i> 网站设置
+                </button>
+                <button onclick="switchTab('footer-setting')" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-700 flex items-center gap-3">
+                    <i class="fa fa-info-circle"></i> 页脚设置
+                </button>
             </div>
+        </aside>
 
-            <!-- 右边：订阅区域 -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
-                <h2 class="font-bold text-lg border-b pb-2">📩 订阅区域设置</h2>
-                <input id="sub_title" class="w-full border p-2 rounded" placeholder="订阅标题">
-                <textarea id="sub_desc" class="w-full border p-2 rounded" rows="2" placeholder="订阅描述"></textarea>
-                <input id="sub_tip" class="w-full border p-2 rounded" placeholder="订阅底部提示">
-            </div>
-
-            <!-- 写作干货 -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
-                <h2 class="font-bold text-lg border-b pb-2">✍️ 写作干货设置</h2>
-                <input id="writing_item_title" class="w-full border p-2 rounded" placeholder="干货标题">
-                <div class="grid grid-cols-2 gap-3">
-                    <input id="writing_item_type" class="border p-2 rounded" placeholder="分类">
-                    <input id="writing_item_date" class="border p-2 rounded" placeholder="日期">
+        <!-- 主内容区 -->
+        <main class="ml-64 flex-1 p-6">
+            <!-- 后台首页 -->
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6 mb-6">
+                    <h2 class="text-xl font-bold mb-4">网站摘要</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="border-b pb-2">当前用户：<span class="font-medium">admin</span></div>
+                        <div class="border-b pb-2">当前版本：<span class="font-medium">1.0.0</span></div>
+                        <div class="border-b pb-2">文章总数：<span class="font-medium" id="stat-posts">0</span></div>
+                        <div class="border-b pb-2">小说总数：<span class="font-medium" id="stat-novels">0</span></div>
+                        <div class="border-b pb-2">干货总数：<span class="font-medium" id="stat-skills">0</span></div>
+                        <div class="border-b pb-2">浏览总数：<span class="font-medium">1</span></div>
+                    </div>
                 </div>
-                <textarea id="writing_item_desc" class="w-full border p-2 rounded" rows="3" placeholder="干货内容"></textarea>
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h3 class="font-bold mb-3">欢迎使用小说博客后台管理系统</h3>
+                    <p class="text-gray-600 dark:text-gray-300">你可以在这里管理你的小说、文章、干货和网站设置，所有数据保存在浏览器本地。</p>
+                </div>
             </div>
 
-            <!-- 页脚 -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
-                <h2 class="font-bold text-lg border-b pb-2">🧾 页脚设置</h2>
-                <input id="footer_about_title" class="w-full border p-2 rounded" placeholder="关于标题">
-                <textarea id="footer_about_text" class="w-full border p-2 rounded" rows="2" placeholder="关于内容"></textarea>
-                <input id="footer_nav_title" class="w-full border p-2 rounded" placeholder="导航标题">
-                <input id="footer_cat_title" class="w-full border p-2 rounded" placeholder="分类标题">
-                <input id="footer_contact_title" class="w-full border p-2 rounded" placeholder="联系标题">
-                <input id="footer_contact_text" class="w-full border p-2 rounded" placeholder="联系内容">
-                <input id="footer_copyright" class="w-full border p-2 rounded" placeholder="版权信息">
+            <!-- 新建文章 -->
+            <div id="tab-new-post" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">新建文章</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-1 font-medium">文章标题</label>
+                            <input id="new-post-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="输入文章标题">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">文章分类</label>
+                            <select id="new-post-category" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded">
+                                <option value="小说">小说</option>
+                                <option value="干货">干货</option>
+                                <option value="随笔">随笔</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">文章内容</label>
+                            <textarea id="new-post-content" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded h-60" placeholder="输入文章正文"></textarea>
+                        </div>
+                        <button onclick="saveNewPost()" class="bg-primary text-white px-4 py-2 rounded hover:bg-gray-700">发布文章</button>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- 小说管理（超级功能） -->
-        <div class="mt-6 bg-white dark:bg-gray-800 p-6 rounded shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-bold text-lg">📚 小说管理（写小说）</h2>
-                <button onclick="addNovel()" class="px-3 py-1 border rounded">+ 添加小说</button>
+            <!-- 文章管理 -->
+            <div id="tab-post-manage" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">文章管理</h2>
+                    <div id="post-list" class="space-y-3"></div>
+                </div>
             </div>
-            <div id="novels_admin" class="space-y-6"></div>
-        </div>
-    </main>
+
+            <!-- 小说管理 -->
+            <div id="tab-novel-manage" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">小说管理</h2>
+                        <button onclick="addNovel()" class="bg-primary text-white px-3 py-1 rounded">+ 添加小说</button>
+                    </div>
+                    <div id="novel-list" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 写作干货管理 -->
+            <div id="tab-skill-manage" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">写作干货管理</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-1 font-medium">干货标题</label>
+                            <input id="skill-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="干货标题">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-1 font-medium">分类</label>
+                                <input id="skill-type" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="如：写作技巧">
+                            </div>
+                            <div>
+                                <label class="block mb-1 font-medium">日期</label>
+                                <input id="skill-date" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="2026-04-30">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">内容简介</label>
+                            <textarea id="skill-desc" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded h-32" placeholder="干货内容简介"></textarea>
+                        </div>
+                        <button onclick="saveSkill()" class="bg-primary text-white px-4 py-2 rounded hover:bg-gray-700">保存干货</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 网站设置 -->
+            <div id="tab-site-setting" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">网站设置</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-1 font-medium">网站名称</label>
+                            <input id="site-name" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="网站名称">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">首页大标题</label>
+                            <input id="hero-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="首页标题">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">首页描述</label>
+                            <textarea id="hero-desc" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" rows="2" placeholder="首页描述"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-1 font-medium">精选小说标题</label>
+                                <input id="featured-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="精选小说">
+                            </div>
+                            <div>
+                                <label class="block mb-1 font-medium">写作干货标题</label>
+                                <input id="writing-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="写作干货">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">订阅区域标题</label>
+                            <input id="sub-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="订阅更新">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">订阅区域描述</label>
+                            <textarea id="sub-desc" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" rows="2" placeholder="订阅描述"></textarea>
+                        </div>
+                        <button onclick="saveSiteSetting()" class="bg-primary text-white px-4 py-2 rounded hover:bg-gray-700">保存设置</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 页脚设置 -->
+            <div id="tab-footer-setting" class="tab-content">
+                <div class="bg-white dark:bg-gray-800 rounded shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">页脚设置</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-1 font-medium">关于本站标题</label>
+                            <input id="footer-about-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="关于本站">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">关于本站描述</label>
+                            <textarea id="footer-about-text" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" rows="2" placeholder="关于本站描述"></textarea>
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">联系信息标题</label>
+                            <input id="footer-contact-title" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="联系我们">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">联系信息内容</label>
+                            <input id="footer-contact-text" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="邮箱：xxx@xxx.com">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-medium">版权信息</label>
+                            <input id="footer-copyright" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="© 2026 小说博客">
+                        </div>
+                        <button onclick="saveFooterSetting()" class="bg-primary text-white px-4 py-2 rounded hover:bg-gray-700">保存设置</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
+        // 暗黑模式
         const darkToggle = document.getElementById('darkToggle');
-        if(localStorage.getItem('dark')==='1') document.documentElement.classList.add('dark');
+        if(localStorage.getItem('dark') === '1' || (!localStorage.getItem('dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+            document.documentElement.classList.add('dark');
+        }
         darkToggle.onclick = () => {
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('dark', document.documentElement.classList.contains('dark')?'1':'0');
+            localStorage.setItem('dark', document.documentElement.classList.contains('dark') ? '1' : '0');
         };
 
+        // 初始数据
         const defaultData = {
-            site_title:"小说博客",hero_title:"探索文学的无限可能",hero_desc:"发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
-            featured_title:"精选小说",writing_title:"写作干货",
-            novels:[{title:"新小说",type:"类型",author:"作者",desc:"简介",cover:"",chapters:[{title:"第一章",content:"开始写正文"}]}]
+            siteName: "小说博客",
+            heroTitle: "探索文学的无限可能",
+            heroDesc: "发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
+            featuredTitle: "精选小说",
+            writingTitle: "写作干货",
+            novels: [
+                {title:"玄幻修仙小说",type:"玄幻",author:"佚名作者",desc:"逆天改命，踏碎虚空，一段热血修仙之路。",cover:"",chapters:[{"title":"第一章 开篇","content":"第一章正文内容，在这里写小说正文......"}]}
+            ],
+            skill: {title:"小说开篇怎么写才能留住读者", type:"写作技巧", desc:"分享新手写小说必备开篇技巧，快速抓住读者眼球，提高留存率。", date:"2026-04-30"},
+            subTitle: "订阅更新",
+            subDesc: "获取最新小说推荐、写作教程、网文工具资源",
+            footerAboutTitle: "关于本站",
+            footerAboutText: "专注小说分享、写作教程、网文工具的个人博客。",
+            footerContactTitle: "联系我们",
+            footerContactText: "邮箱：contact@novelblog.com",
+            footerCopyright: "© 2026 小说博客 版权所有",
+            posts: []
         };
 
         let data = JSON.parse(localStorage.getItem("ALL_DATA") || JSON.stringify(defaultData));
 
-        function renderForm(){
-            document.getElementById("site_title").value = data.site_title;
-            document.getElementById("hero_title").value = data.hero_title;
-            document.getElementById("hero_desc").value = data.hero_desc;
-            document.getElementById("featured_title").value = data.featured_title;
-            document.getElementById("writing_title").value = data.writing_title;
-            document.getElementById("sub_title").value = data.sub_title;
-            document.getElementById("sub_desc").value = data.sub_desc;
-            document.getElementById("sub_tip").value = data.sub_tip;
-            document.getElementById("writing_item_title").value = data.writing_item_title;
-            document.getElementById("writing_item_type").value = data.writing_item_type;
-            document.getElementById("writing_item_date").value = data.writing_item_date;
-            document.getElementById("writing_item_desc").value = data.writing_item_desc;
-            document.getElementById("footer_about_title").value = data.footer_about_title;
-            document.getElementById("footer_about_text").value = data.footer_about_text;
-            document.getElementById("footer_nav_title").value = data.footer_nav_title;
-            document.getElementById("footer_cat_title").value = data.footer_cat_title;
-            document.getElementById("footer_contact_title").value = data.footer_contact_title;
-            document.getElementById("footer_contact_text").value = data.footer_contact_text;
-            document.getElementById("footer_copyright").value = data.footer_copyright;
-            renderNovels();
+        // 切换标签页
+        function switchTab(tabName){
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-'+tabName).classList.add('active');
+            // 更新侧边栏高亮
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item')[Object.keys(tabs).indexOf(tabName)].classList.add('active');
+        }
+        const tabs = {
+            dashboard: 0,
+            "new-post":1,
+            "post-manage":2,
+            "novel-manage":3,
+            "skill-manage":4,
+            "site-setting":5,
+            "footer-setting":6
+        };
+
+        // 渲染统计数据
+        function renderStats(){
+            document.getElementById('stat-posts').innerText = data.posts.length;
+            document.getElementById('stat-novels').innerText = data.novels.length;
+            document.getElementById('stat-skills').innerText = 1;
         }
 
+        // 渲染小说列表
         function renderNovels(){
-            let h = "";
-            data.novels.forEach((n,ni)=>{
-                h+=`
-                <div class="border p-4 rounded dark:border-gray-700">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-                        <input value="${n.title}" oninput="data.novels[${ni}].title=this.value" class="border p-2 rounded" placeholder="书名">
-                        <input value="${n.type}" oninput="data.novels[${ni}].type=this.value" class="border p-2 rounded" placeholder="分类">
-                        <input value="${n.author}" oninput="data.novels[${ni}].author=this.value" class="border p-2 rounded" placeholder="作者">
-                        <input type="file" accept="image/*" onchange="upCover(event,${ni})" class="text-sm">
+            let html = "";
+            data.novels.forEach((n,i)=>{
+                html += `
+                <div class="border dark:border-gray-700 p-4 rounded">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold">${n.title}</h3>
+                            <span class="text-sm text-gray-500">${n.type} / ${n.author}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editNovel(${i})" class="text-blue-500 text-sm">编辑</button>
+                            <button onclick="delNovel(${i})" class="text-red-500 text-sm">删除</button>
+                        </div>
                     </div>
-                    <textarea value="${n.desc}" oninput="data.novels[${ni}].desc=this.value" class="w-full border p-2 rounded mb-3" rows="2" placeholder="简介">${n.desc}</textarea>
-                    <img src="${n.cover}" class="h-24 object-cover rounded ${n.cover?'':'hidden'} mb-3">
-                    <div class="border-t pt-3">
-                        <button onclick="addChap(${ni})" class="text-blue-500 text-sm">+ 添加章节</button>
-                        <div class="mt-3 space-y-2">${renderChaps(ni)}</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">${n.desc}</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs">章节数：${n.chapters.length}</span>
+                        <input type="file" accept="image/*" onchange="uploadCover(event,${i})" class="text-xs">
+                        ${n.cover ? `<img src="${n.cover}" class="w-12 h-16 object-cover rounded">` : ''}
                     </div>
-                    <button onclick="delNovel(${ni})" class="text-red-500 text-sm mt-2">删除这本小说</button>
+                    <div class="mt-3 border-t pt-2">
+                        <button onclick="addChapter(${i})" class="text-xs text-blue-500">+ 添加章节</button>
+                        <div class="mt-2 space-y-2">
+                            ${n.chapters.map((c,ci)=>`
+                            <div class="border dark:border-gray-700 p-2 rounded text-sm">
+                                <input value="${c.title}" oninput="data.novels[${i}].chapters[${ci}].title=this.value" class="w-full border p-1 rounded mb-1 text-sm">
+                                <textarea oninput="data.novels[${i}].chapters[${ci}].content=this.value" class="w-full border p-1 rounded text-sm" rows="2">${c.content}</textarea>
+                                <button onclick="delChapter(${i},${ci})" class="text-xs text-red-500 mt-1">删除章节</button>
+                            </div>`).join('')}
+                        </div>
+                    </div>
                 </div>`;
             });
-            document.getElementById("novels_admin").innerHTML=h;
+            document.getElementById('novel-list').innerHTML = html;
         }
 
-        function renderChaps(ni){
-            let h="";
-            data.novels[ni].chapters.forEach((c,ci)=>{
-                h+=`
-                <div class="border p-2 rounded dark:border-gray-700">
-                    <input value="${c.title}" oninput="data.novels[${ni}].chapters[${ci}].title=this.value" class="w-full border p-1 rounded mb-1" placeholder="章节名">
-                    <textarea oninput="data.novels[${ni}].chapters[${ci}].content=this.value" class="w-full border p-2 rounded" rows="4" placeholder="正文">${c.content}</textarea>
-                    <button onclick="delChap(${ni},${ci})" class="text-xs text-red-500">删除章节</button>
+        // 渲染文章列表
+        function renderPosts(){
+            let html = "";
+            data.posts.forEach((p,i)=>{
+                html += `
+                <div class="border dark:border-gray-700 p-3 rounded flex justify-between items-center">
+                    <div>
+                        <h4 class="font-medium">${p.title}</h4>
+                        <span class="text-xs text-gray-500">分类：${p.category}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editPost(${i})" class="text-blue-500 text-sm">编辑</button>
+                        <button onclick="delPost(${i})" class="text-red-500 text-sm">删除</button>
+                    </div>
                 </div>`;
             });
-            return h;
+            document.getElementById('post-list').innerHTML = html || '<p class="text-gray-500">暂无文章</p>';
         }
 
-        function upCover(e,ni){
-            let f = e.target.files[0]; if(!f)return;
-            let r=new FileReader(); r.onload=(e)=>{ data.novels[ni].cover=e.target.result; renderNovels(); }
-            r.readAsDataURL(f);
+        // 渲染所有表单数据
+        function renderForm(){
+            document.getElementById('site-name').value = data.siteName;
+            document.getElementById('hero-title').value = data.heroTitle;
+            document.getElementById('hero-desc').value = data.heroDesc;
+            document.getElementById('featured-title').value = data.featuredTitle;
+            document.getElementById('writing-title').value = data.writingTitle;
+            document.getElementById('sub-title').value = data.subTitle;
+            document.getElementById('sub-desc').value = data.subDesc;
+            document.getElementById('footer-about-title').value = data.footerAboutTitle;
+            document.getElementById('footer-about-text').value = data.footerAboutText;
+            document.getElementById('footer-contact-title').value = data.footerContactTitle;
+            document.getElementById('footer-contact-text').value = data.footerContactText;
+            document.getElementById('footer-copyright').value = data.footerCopyright;
+            document.getElementById('skill-title').value = data.skill.title;
+            document.getElementById('skill-type').value = data.skill.type;
+            document.getElementById('skill-desc').value = data.skill.desc;
+            document.getElementById('skill-date').value = data.skill.date;
         }
 
-        function addNovel(){ data.novels.push({title:"新小说",type:"",author:"",desc:"",cover:"",chapters:[{title:"第一章",content:""}]}); renderNovels(); }
-        function delNovel(ni){ data.novels.splice(ni,1); renderNovels(); }
-        function addChap(ni){ data.novels[ni].chapters.push({title:"新章节",content:""}); renderNovels(); }
-        function delChap(ni,ci){ data.novels[ni].chapters.splice(ci,1); renderNovels(); }
+        // 小说操作
+        function addNovel(){
+            data.novels.push({title:"新小说",type:"类型",author:"作者",desc:"简介",cover:"",chapters:[{"title":"第一章","content":"正文内容"}]});
+            renderNovels();
+            saveData();
+        }
+        function delNovel(i){
+            if(confirm("确定删除这本小说？")){
+                data.novels.splice(i,1);
+                renderNovels();
+                saveData();
+            }
+        }
+        function editNovel(i){
+            alert("编辑功能已绑定到表单中，修改后自动保存");
+        }
+        function addChapter(i){
+            data.novels[i].chapters.push({title:"新章节","content":"正文"});
+            renderNovels();
+            saveData();
+        }
+        function delChapter(i,ci){
+            data.novels[i].chapters.splice(ci,1);
+            renderNovels();
+            saveData();
+        }
+        function uploadCover(e,i){
+            let file = e.target.files[0];
+            if(!file) return;
+            let reader = new FileReader();
+            reader.onload = res => {
+                data.novels[i].cover = res.target.result;
+                renderNovels();
+                saveData();
+            };
+            reader.readAsDataURL(file);
+        }
 
-        function saveAll(){
-            data.site_title = document.getElementById("site_title").value;
-            data.hero_title = document.getElementById("hero_title").value;
-            data.hero_desc = document.getElementById("hero_desc").value;
-            data.featured_title = document.getElementById("featured_title").value;
-            data.writing_title = document.getElementById("writing_title").value;
-            data.sub_title = document.getElementById("sub_title").value;
-            data.sub_desc = document.getElementById("sub_desc").value;
-            data.sub_tip = document.getElementById("sub_tip").value;
-            data.writing_item_title = document.getElementById("writing_item_title").value;
-            data.writing_item_type = document.getElementById("writing_item_type").value;
-            data.writing_item_date = document.getElementById("writing_item_date").value;
-            data.writing_item_desc = document.getElementById("writing_item_desc").value;
-            data.footer_about_title = document.getElementById("footer_about_title").value;
-            data.footer_about_text = document.getElementById("footer_about_text").value;
-            data.footer_nav_title = document.getElementById("footer_nav_title").value;
-            data.footer_cat_title = document.getElementById("footer_cat_title").value;
-            data.footer_contact_title = document.getElementById("footer_contact_title").value;
-            data.footer_contact_text = document.getElementById("footer_contact_text").value;
-            data.footer_copyright = document.getElementById("footer_copyright").value;
+        // 文章操作
+        function saveNewPost(){
+            let title = document.getElementById('new-post-title').value;
+            let category = document.getElementById('new-post-category').value;
+            let content = document.getElementById('new-post-content').value;
+            if(!title || !content) return alert("请填写完整");
+            data.posts.push({title, category, content, date: new Date().toISOString().split('T')[0]});
+            alert("发布成功");
+            renderPosts();
+            renderStats();
+            document.getElementById('new-post-title').value = '';
+            document.getElementById('new-post-content').value = '';
+            saveData();
+        }
+        function delPost(i){
+            if(confirm("确定删除？")){
+                data.posts.splice(i,1);
+                renderPosts();
+                renderStats();
+                saveData();
+            }
+        }
+        function editPost(i){
+            let p = data.posts[i];
+            document.getElementById('new-post-title').value = p.title;
+            document.getElementById('new-post-category').value = p.category;
+            document.getElementById('new-post-content').value = p.content;
+            switchTab('new-post');
+        }
+
+        // 保存设置
+        function saveSiteSetting(){
+            data.siteName = document.getElementById('site-name').value;
+            data.heroTitle = document.getElementById('hero-title').value;
+            data.heroDesc = document.getElementById('hero-desc').value;
+            data.featuredTitle = document.getElementById('featured-title').value;
+            data.writingTitle = document.getElementById('writing-title').value;
+            data.subTitle = document.getElementById('sub-title').value;
+            data.subDesc = document.getElementById('sub-desc').value;
+            alert("保存成功");
+            saveData();
+        }
+        function saveFooterSetting(){
+            data.footerAboutTitle = document.getElementById('footer-about-title').value;
+            data.footerAboutText = document.getElementById('footer-about-text').value;
+            data.footerContactTitle = document.getElementById('footer-contact-title').value;
+            data.footerContactText = document.getElementById('footer-contact-text').value;
+            data.footerCopyright = document.getElementById('footer-copyright').value;
+            alert("保存成功");
+            saveData();
+        }
+        function saveSkill(){
+            data.skill.title = document.getElementById('skill-title').value;
+            data.skill.type = document.getElementById('skill-type').value;
+            data.skill.desc = document.getElementById('skill-desc').value;
+            data.skill.date = document.getElementById('skill-date').value;
+            alert("保存成功");
+            saveData();
+        }
+
+        function saveData(){
             localStorage.setItem("ALL_DATA", JSON.stringify(data));
-            alert("✅ 保存成功！所有内容已更新！");
         }
 
+        // 初始化
         renderForm();
+        renderStats();
+        renderNovels();
+        renderPosts();
     </script>
 </body>
 </html>

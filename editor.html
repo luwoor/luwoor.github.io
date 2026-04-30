@@ -3,197 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小说博客 - 后台编辑</title>
+    <title>超级后台 - 小说博客管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = { darkMode:'class' }
-    </script>
-    <style>
-        .dark{color-scheme:dark;}
-    </style>
+    <script> tailwind.config = { darkMode: 'class' } </script>
+    <style> .dark{color-scheme:dark;} </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
-    <header class="fixed w-full bg-white dark:bg-gray-800 shadow-sm py-4 px-6 z-50">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">小说博客 · 在线编辑后台</h1>
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-300">
+    <header class="fixed w-full bg-white dark:bg-gray-800 shadow z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold">📝 小说博客超级后台</h1>
             <div class="flex gap-3 items-center">
-                <button id="darkToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
-                    <i class="fa fa-moon-o dark:hidden"></i>
-                    <i class="fa fa-sun-o hidden dark:inline"></i>
-                </button>
-                <a href="index.html" class="px-3 py-1 border dark:border-gray-600 rounded">返回首页</a>
-                <button onclick="saveAll()" class="bg-black dark:bg-white dark:text-black text-white px-4 py-1 rounded">保存全部</button>
+                <button id="darkToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"><i class="fa fa-moon-o dark:hidden"></i><i class="fa fa-sun-o hidden dark:inline"></i></button>
+                <a href="index.html" class="px-3 py-1 border rounded">预览首页</a>
+                <button onclick="saveAll()" class="bg-black dark:bg-white dark:text-black text-white px-4 py-1 rounded">💾 保存全部</button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-6 pt-28 pb-20">
-        <!-- 首页英雄区设置 -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-6">
-            <h3 class="font-bold text-lg mb-4">🏠 首页顶部文案</h3>
-            <input id="heroTitle" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded mb-3" placeholder="大标题">
-            <textarea id="heroDesc" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded mb-2" rows="2" placeholder="描述文案"></textarea>
+    <main class="pt-24 pb-20 container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 左边：网站基础设置 -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
+                <h2 class="font-bold text-lg border-b pb-2">🌐 网站基础设置</h2>
+                <input id="site_title" class="w-full border p-2 rounded" placeholder="网站名称">
+                <input id="hero_title" class="w-full border p-2 rounded" placeholder="首页大标题">
+                <textarea id="hero_desc" class="w-full border p-2 rounded" rows="2" placeholder="首页描述"></textarea>
+                <input id="featured_title" class="w-full border p-2 rounded" placeholder="精选小说标题">
+                <input id="writing_title" class="w-full border p-2 rounded" placeholder="写作干货标题">
+            </div>
+
+            <!-- 右边：订阅区域 -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
+                <h2 class="font-bold text-lg border-b pb-2">📩 订阅区域设置</h2>
+                <input id="sub_title" class="w-full border p-2 rounded" placeholder="订阅标题">
+                <textarea id="sub_desc" class="w-full border p-2 rounded" rows="2" placeholder="订阅描述"></textarea>
+                <input id="sub_tip" class="w-full border p-2 rounded" placeholder="订阅底部提示">
+            </div>
+
+            <!-- 写作干货 -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
+                <h2 class="font-bold text-lg border-b pb-2">✍️ 写作干货设置</h2>
+                <input id="writing_item_title" class="w-full border p-2 rounded" placeholder="干货标题">
+                <div class="grid grid-cols-2 gap-3">
+                    <input id="writing_item_type" class="border p-2 rounded" placeholder="分类">
+                    <input id="writing_item_date" class="border p-2 rounded" placeholder="日期">
+                </div>
+                <textarea id="writing_item_desc" class="w-full border p-2 rounded" rows="3" placeholder="干货内容"></textarea>
+            </div>
+
+            <!-- 页脚 -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow space-y-4">
+                <h2 class="font-bold text-lg border-b pb-2">🧾 页脚设置</h2>
+                <input id="footer_about_title" class="w-full border p-2 rounded" placeholder="关于标题">
+                <textarea id="footer_about_text" class="w-full border p-2 rounded" rows="2" placeholder="关于内容"></textarea>
+                <input id="footer_nav_title" class="w-full border p-2 rounded" placeholder="导航标题">
+                <input id="footer_cat_title" class="w-full border p-2 rounded" placeholder="分类标题">
+                <input id="footer_contact_title" class="w-full border p-2 rounded" placeholder="联系标题">
+                <input id="footer_contact_text" class="w-full border p-2 rounded" placeholder="联系内容">
+                <input id="footer_copyright" class="w-full border p-2 rounded" placeholder="版权信息">
+            </div>
         </div>
 
-        <!-- 小说管理 -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-6">
+        <!-- 小说管理（超级功能） -->
+        <div class="mt-6 bg-white dark:bg-gray-800 p-6 rounded shadow">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg">📚 精选小说管理（最多3本）</h3>
-                <button onclick="addNovel()" class="text-sm border dark:border-gray-600 px-3 py-1 rounded">+ 添加小说</button>
+                <h2 class="font-bold text-lg">📚 小说管理（写小说）</h2>
+                <button onclick="addNovel()" class="px-3 py-1 border rounded">+ 添加小说</button>
             </div>
-            <div id="novelEditBox"></div>
-        </div>
-
-        <!-- 写作干货管理 -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 class="font-bold text-lg mb-4">✍️ 写作干货内容</h3>
-            <input id="skillTitle" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded mb-3" placeholder="干货标题">
-            <div class="grid grid-cols-2 gap-3 mb-3">
-                <input id="skillType" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="分类">
-                <input id="skillDate" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="日期 2026-04-30">
-            </div>
-            <textarea id="skillDesc" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" rows="3" placeholder="干货简介内容"></textarea>
+            <div id="novels_admin" class="space-y-6"></div>
         </div>
     </main>
 
     <script>
-        // 暗黑模式
         const darkToggle = document.getElementById('darkToggle');
-        if(localStorage.getItem('dark') === '1' || 
-           (!localStorage.getItem('dark') && window.matchMedia('(prefers-color-scheme: dark)').matches)){
-            document.documentElement.classList.add('dark');
-        }
+        if(localStorage.getItem('dark')==='1') document.documentElement.classList.add('dark');
         darkToggle.onclick = () => {
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('dark', document.documentElement.classList.contains('dark') ? '1' : '0');
+            localStorage.setItem('dark', document.documentElement.classList.contains('dark')?'1':'0');
         };
 
-        // 初始数据
         const defaultData = {
-            heroTitle: "探索文学的无限可能",
-            heroDesc: "发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
-            novels: [
-                {title:"玄幻修仙小说",type:"玄幻",author:"佚名作者",desc:"逆天改命，踏碎虚空，一段热血修仙之路。",cover:"",chapters:[{"title":"第一章 开篇","content":"第一章正文内容......"}]},
-                {title:"都市悬疑故事",type:"悬疑",author:"热门作者",desc:"都市迷雾重重，真相藏于细微之间。",cover:"",chapters:[{"title":"第一章 迷雾","content":"第一章正文内容......"}]},
-                {title:"都市言情小说",type:"言情",author:"人气作家",desc:"人间烟火，遇见你便是余生温柔。",cover:"",chapters:[{"title":"第一章 遇见","content":"第一章正文内容......"}]}
-            ],
-            skillTitle:"小说开篇怎么写才能留住读者",
-            skillType:"写作技巧",
-            skillDesc:"分享新手写小说必备开篇技巧，快速抓住读者眼球，提高留存率。",
-            skillDate:"2026-04-30"
+            site_title:"小说博客",hero_title:"探索文学的无限可能",hero_desc:"发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
+            featured_title:"精选小说",writing_title:"写作干货",
+            novels:[{title:"新小说",type:"类型",author:"作者",desc:"简介",cover:"",chapters:[{title:"第一章",content:"开始写正文"}]}]
         };
 
-        let data = JSON.parse(localStorage.getItem("novelBlogData") || JSON.stringify(defaultData));
+        let data = JSON.parse(localStorage.getItem("ALL_DATA") || JSON.stringify(defaultData));
 
-        // 渲染编辑面板
-        function renderEdit(){
-            document.getElementById("heroTitle").value = data.heroTitle;
-            document.getElementById("heroDesc").value = data.heroDesc;
-            document.getElementById("skillTitle").value = data.skillTitle;
-            document.getElementById("skillType").value = data.skillType;
-            document.getElementById("skillDate").value = data.skillDate;
-            document.getElementById("skillDesc").value = data.skillDesc;
+        function renderForm(){
+            document.getElementById("site_title").value = data.site_title;
+            document.getElementById("hero_title").value = data.hero_title;
+            document.getElementById("hero_desc").value = data.hero_desc;
+            document.getElementById("featured_title").value = data.featured_title;
+            document.getElementById("writing_title").value = data.writing_title;
+            document.getElementById("sub_title").value = data.sub_title;
+            document.getElementById("sub_desc").value = data.sub_desc;
+            document.getElementById("sub_tip").value = data.sub_tip;
+            document.getElementById("writing_item_title").value = data.writing_item_title;
+            document.getElementById("writing_item_type").value = data.writing_item_type;
+            document.getElementById("writing_item_date").value = data.writing_item_date;
+            document.getElementById("writing_item_desc").value = data.writing_item_desc;
+            document.getElementById("footer_about_title").value = data.footer_about_title;
+            document.getElementById("footer_about_text").value = data.footer_about_text;
+            document.getElementById("footer_nav_title").value = data.footer_nav_title;
+            document.getElementById("footer_cat_title").value = data.footer_cat_title;
+            document.getElementById("footer_contact_title").value = data.footer_contact_title;
+            document.getElementById("footer_contact_text").value = data.footer_contact_text;
+            document.getElementById("footer_copyright").value = data.footer_copyright;
+            renderNovels();
+        }
 
-            let html = "";
-            data.novels.forEach((novel, nIdx)=>{
-                html += `
-                <div class="border dark:border-gray-600 p-4 rounded mb-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                        <input value="${novel.title}" oninput="data.novels[${nIdx}].title=this.value" class="border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="小说标题">
-                        <input value="${novel.type}" oninput="data.novels[${nIdx}].type=this.value" class="border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="分类">
-                        <input value="${novel.author}" oninput="data.novels[${nIdx}].author=this.value" class="border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" placeholder="作者">
+        function renderNovels(){
+            let h = "";
+            data.novels.forEach((n,ni)=>{
+                h+=`
+                <div class="border p-4 rounded dark:border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                        <input value="${n.title}" oninput="data.novels[${ni}].title=this.value" class="border p-2 rounded" placeholder="书名">
+                        <input value="${n.type}" oninput="data.novels[${ni}].type=this.value" class="border p-2 rounded" placeholder="分类">
+                        <input value="${n.author}" oninput="data.novels[${ni}].author=this.value" class="border p-2 rounded" placeholder="作者">
+                        <input type="file" accept="image/*" onchange="upCover(event,${ni})" class="text-sm">
                     </div>
-                    <textarea oninput="data.novels[${nIdx}].desc=this.value" class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded mb-3" rows="2" placeholder="小说简介">${novel.desc}</textarea>
-                    
-                    <!-- 封面上传 -->
-                    <div class="mb-3">
-                        <label class="text-sm block mb-1">上传封面图片</label>
-                        <input type="file" accept="image/*" onchange="uploadCover(event,${nIdx})">
-                        <img id="coverPre${nIdx}" src="${novel.cover||''}" class="mt-2 w-32 h-40 object-cover rounded ${novel.cover?'':'hidden'}">
+                    <textarea value="${n.desc}" oninput="data.novels[${ni}].desc=this.value" class="w-full border p-2 rounded mb-3" rows="2" placeholder="简介">${n.desc}</textarea>
+                    <img src="${n.cover}" class="h-24 object-cover rounded ${n.cover?'':'hidden'} mb-3">
+                    <div class="border-t pt-3">
+                        <button onclick="addChap(${ni})" class="text-blue-500 text-sm">+ 添加章节</button>
+                        <div class="mt-3 space-y-2">${renderChaps(ni)}</div>
                     </div>
-
-                    <!-- 章节管理 -->
-                    <div class="border-t dark:border-gray-600 pt-3 mt-3">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-bold">章节列表</span>
-                            <button onclick="addChapter(${nIdx})" class="text-sm text-blue-500">+ 新增章节</button>
-                        </div>
-                        <div id="chapBox${nIdx}">${renderChapter(nIdx)}</div>
-                    </div>
-
-                    <button onclick="delNovel(${nIdx})" class="text-red-500 text-sm mt-3">删除这本小说</button>
+                    <button onclick="delNovel(${ni})" class="text-red-500 text-sm mt-2">删除这本小说</button>
                 </div>`;
             });
-            document.getElementById("novelEditBox").innerHTML = html;
+            document.getElementById("novels_admin").innerHTML=h;
         }
 
-        // 渲染章节
-        function renderChapter(nIdx){
-            let chapHtml = "";
-            data.novels[nIdx].chapters.forEach((chap, cIdx)=>{
-                chapHtml += `
-                <div class="border dark:border-gray-600 p-3 rounded mb-2">
-                    <input value="${chap.title}" oninput="data.novels[${nIdx}].chapters[${cIdx}].title=this.value" 
-                    class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded mb-2" placeholder="章节标题">
-                    <textarea oninput="data.novels[${nIdx}].chapters[${cIdx}].content=this.value" 
-                    class="w-full border dark:border-gray-600 dark:bg-gray-700 p-2 rounded" rows="3" placeholder="章节正文">${chap.content}</textarea>
-                    <button onclick="delChapter(${nIdx},${cIdx})" class="text-xs text-red-500 mt-2">删除章节</button>
+        function renderChaps(ni){
+            let h="";
+            data.novels[ni].chapters.forEach((c,ci)=>{
+                h+=`
+                <div class="border p-2 rounded dark:border-gray-700">
+                    <input value="${c.title}" oninput="data.novels[${ni}].chapters[${ci}].title=this.value" class="w-full border p-1 rounded mb-1" placeholder="章节名">
+                    <textarea oninput="data.novels[${ni}].chapters[${ci}].content=this.value" class="w-full border p-2 rounded" rows="4" placeholder="正文">${c.content}</textarea>
+                    <button onclick="delChap(${ni},${ci})" class="text-xs text-red-500">删除章节</button>
                 </div>`;
             });
-            return chapHtml;
+            return h;
         }
 
-        // 上传封面转Base64
-        function uploadCover(e, nIdx){
-            let file = e.target.files[0];
-            if(!file) return;
-            let reader = new FileReader();
-            reader.onload = res => {
-                data.novels[nIdx].cover = res.target.result;
-                let img = document.getElementById("coverPre"+nIdx);
-                img.src = res.target.result;
-                img.classList.remove("hidden");
-            };
-            reader.readAsDataURL(file);
+        function upCover(e,ni){
+            let f = e.target.files[0]; if(!f)return;
+            let r=new FileReader(); r.onload=(e)=>{ data.novels[ni].cover=e.target.result; renderNovels(); }
+            r.readAsDataURL(f);
         }
 
-        // 小说操作
-        function addNovel(){
-            if(data.novels.length >=3) return alert("最多只能添加3本小说");
-            data.novels.push({
-                title:"新小说",type:"未知",author:"佚名",desc:"请填写小说简介",cover:"",chapters:[{"title":"第一章","content":"请输入章节内容"}]
-            });
-            renderEdit();
-        }
-        function delNovel(nIdx){
-            data.novels.splice(nIdx,1);
-            renderEdit();
-        }
-        function addChapter(nIdx){
-            data.novels[nIdx].chapters.push({title:"新章节",content":"请输入正文"});
-            renderEdit();
-        }
-        function delChapter(nIdx,cIdx){
-            data.novels[nIdx].chapters.splice(cIdx,1);
-            renderEdit();
-        }
+        function addNovel(){ data.novels.push({title:"新小说",type:"",author:"",desc:"",cover:"",chapters:[{title:"第一章",content:""}]}); renderNovels(); }
+        function delNovel(ni){ data.novels.splice(ni,1); renderNovels(); }
+        function addChap(ni){ data.novels[ni].chapters.push({title:"新章节",content:""}); renderNovels(); }
+        function delChap(ni,ci){ data.novels[ni].chapters.splice(ci,1); renderNovels(); }
 
-        // 保存全部
         function saveAll(){
-            data.heroTitle = document.getElementById("heroTitle").value;
-            data.heroDesc = document.getElementById("heroDesc").value;
-            data.skillTitle = document.getElementById("skillTitle").value;
-            data.skillType = document.getElementById("skillType").value;
-            data.skillDate = document.getElementById("skillDate").value;
-            data.skillDesc = document.getElementById("skillDesc").value;
-
-            localStorage.setItem("novelBlogData", JSON.stringify(data));
-            alert("✅ 保存成功！返回首页即可看到更新");
+            data.site_title = document.getElementById("site_title").value;
+            data.hero_title = document.getElementById("hero_title").value;
+            data.hero_desc = document.getElementById("hero_desc").value;
+            data.featured_title = document.getElementById("featured_title").value;
+            data.writing_title = document.getElementById("writing_title").value;
+            data.sub_title = document.getElementById("sub_title").value;
+            data.sub_desc = document.getElementById("sub_desc").value;
+            data.sub_tip = document.getElementById("sub_tip").value;
+            data.writing_item_title = document.getElementById("writing_item_title").value;
+            data.writing_item_type = document.getElementById("writing_item_type").value;
+            data.writing_item_date = document.getElementById("writing_item_date").value;
+            data.writing_item_desc = document.getElementById("writing_item_desc").value;
+            data.footer_about_title = document.getElementById("footer_about_title").value;
+            data.footer_about_text = document.getElementById("footer_about_text").value;
+            data.footer_nav_title = document.getElementById("footer_nav_title").value;
+            data.footer_cat_title = document.getElementById("footer_cat_title").value;
+            data.footer_contact_title = document.getElementById("footer_contact_title").value;
+            data.footer_contact_text = document.getElementById("footer_contact_text").value;
+            data.footer_copyright = document.getElementById("footer_copyright").value;
+            localStorage.setItem("ALL_DATA", JSON.stringify(data));
+            alert("✅ 保存成功！所有内容已更新！");
         }
 
-        // 初始化
-        renderEdit();
+        renderForm();
     </script>
 </body>
 </html>

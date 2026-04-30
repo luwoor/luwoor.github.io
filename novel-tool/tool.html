@@ -23,6 +23,7 @@
         .preview-panel {max-width:1000px;margin:0 auto;}
         .bread-nav {font-size:14px;color:#666;padding:15px 20px;}
 
+        /* 电脑端默认：左右2:1布局 */
         .top-wrapper {
             display:flex;
             align-items:center;
@@ -30,10 +31,10 @@
             border-bottom: none;
             margin-bottom: 30px;
         }
-
         .novel-section {flex:2;display:flex;align-items:center;gap:20px;}
         .split-line {width:1px;height:120px;background:#eee;margin:0 20px;align-self:center;}
         .author-section {flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
+
         .novel-cover {width:130px;height:170px;border-radius:8px;object-fit:cover;background:#f0f0f0;}
         .novel-info {text-align:left;}
         .novel-title {font-size:24px;font-weight:bold;margin-bottom:8px;}
@@ -73,14 +74,14 @@
         .float-btn {background:transparent;border:none;font-size:22px;cursor:pointer;color:#666;padding:5px;}
         .float-btn:hover {color:#ff6b35;}
 
-        /* 手机端样式 */
+        /* ========== 仅手机端（≤768px）重排 ========== */
         @media (max-width:768px){
             .top-wrapper {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 20px;
             }
-            /* 作者区块在上，下方加分隔线 */
+            /* 手机端：作者区块在上，带底部分隔线 */
             .author-section {
                 width: 100%;
                 display: flex;
@@ -93,6 +94,7 @@
                 border-bottom: 1px solid #eee;
                 text-align: left;
             }
+            /* 小说信息在作者下方，居中 */
             .novel-section {
                 width: 100%;
                 display: flex;
@@ -102,6 +104,7 @@
             }
             .split-line {display:none !important;}
 
+            /* 手机端作者头像小一点 */
             .author-avatar {
                 display: block !important;
                 width: 44px !important;
@@ -173,7 +176,7 @@
     <div class="preview-panel">
         <div class="bread-nav">首页 / <span id="previewBreadName">小说名称</span></div>
         <div class="top-wrapper">
-            <!-- 手机端：作者放最上面 -->
+            <!-- 手机端：作者在最上面；电脑端：flex自动左右排列 -->
             <div class="author-section">
                 <img class="author-avatar" id="previewAvatar">
                 <div>
@@ -185,9 +188,10 @@
                 </div>
             </div>
 
+            <!-- 电脑端竖线分隔 -->
             <div class="split-line"></div>
 
-            <!-- 然后是封面小说信息 -->
+            <!-- 小说信息区 -->
             <div class="novel-section">
                 <img class="novel-cover" id="previewCover">
                 <div class="novel-info">

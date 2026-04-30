@@ -127,7 +127,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold mb-4 dark:text-white" id="footer_nav_title">导航链接</h3>
-                    <ul class="space-y-2" id="footer_nav_links">
+                    <ul class="space-y-2">
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">首页</a></li>
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">热门</a></li>
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">写作</a></li>
@@ -137,7 +137,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold mb-4 dark:text-white" id="footer_cat_title">内容分类</h3>
-                    <ul class="space-y-2" id="footer_cat_links">
+                    <ul class="space-y-2">
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">玄幻小说</a></li>
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">都市言情</a></li>
                         <li><a href="#" class="text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-white">悬疑推理</a></li>
@@ -172,42 +172,45 @@
         };
 
         const defaultData = {
-            site_title: "小说博客",
-            hero_title: "探索文学的无限可能", hero_desc: "发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
-            featured_title: "精选小说",
+            siteName: "小说博客",
+            heroTitle: "探索文学的无限可能",
+            heroDesc: "发现最新小说、经典名著和写作干货，开启你的创作与阅读之旅",
+            featuredTitle: "精选小说",
+            writingTitle: "写作干货",
             novels: [
-                {title:"玄幻修仙小说",type:"玄幻",author:"佚名作者",desc:"逆天改命，踏碎虚空，一段热血修仙之路。",cover:"",chapters:[{title:"第一章 开篇",content:"正文内容"}]}
+                {title:"玄幻修仙小说",type:"玄幻",author:"佚名作者",desc:"逆天改命，踏碎虚空，一段热血修仙之路。",cover:"",chapters:[{"title":"第一章 开篇","content":"第一章正文内容，在这里写小说正文......"}]}
             ],
-            writing_title: "写作干货",
-            writing_item_title: "小说开篇怎么写才能留住读者",
-            writing_item_type: "写作技巧",
-            writing_item_desc: "分享新手写小说必备开篇技巧，快速抓住读者眼球，提高留存率。",
-            writing_item_date: "2026-04-30",
-            sub_title: "订阅更新", sub_desc: "获取最新小说推荐、写作教程、网文工具资源", sub_tip: "尊重隐私，绝不群发骚扰",
-            footer_about_title: "关于本站", footer_about_text: "专注小说分享、写作教程、网文工具的个人博客。",
-            footer_nav_title: "导航链接", footer_cat_title: "内容分类",
-            footer_contact_title: "联系我们", footer_contact_text: "邮箱：contact@novelblog.com",
-            footer_copyright: "© 2026 小说博客 版权所有"
+            skill: {title:"小说开篇怎么写才能留住读者", type:"写作技巧", desc:"分享新手写小说必备开篇技巧，快速抓住读者眼球，提高留存率。", date:"2026-04-30"},
+            subTitle: "订阅更新",
+            subDesc: "获取最新小说推荐、写作教程、网文工具资源",
+            subTip: "尊重隐私，绝不群发骚扰",
+            footerAboutTitle: "关于本站",
+            footerAboutText: "专注小说分享、写作教程、网文工具的个人博客。",
+            footerNavTitle: "导航链接",
+            footerCatTitle: "内容分类",
+            footerContactTitle: "联系我们",
+            footerContactText: "邮箱：contact@novelblog.com",
+            footerCopyright: "© 2026 小说博客 版权所有"
         };
 
         let data = JSON.parse(localStorage.getItem("ALL_DATA") || JSON.stringify(defaultData));
 
         function renderAll(){
-            document.getElementById("site_title").innerText = data.site_title;
-            document.getElementById("hero_title").innerText = data.hero_title;
-            document.getElementById("hero_desc").innerText = data.hero_desc;
-            document.getElementById("featured_title").innerText = data.featured_title;
-            document.getElementById("writing_title").innerText = data.writing_title;
-            document.getElementById("sub_title").innerText = data.sub_title;
-            document.getElementById("sub_desc").innerText = data.sub_desc;
-            document.getElementById("sub_tip").innerText = data.sub_tip;
-            document.getElementById("footer_about_title").innerText = data.footer_about_title;
-            document.getElementById("footer_about_text").innerText = data.footer_about_text;
-            document.getElementById("footer_nav_title").innerText = data.footer_nav_title;
-            document.getElementById("footer_cat_title").innerText = data.footer_cat_title;
-            document.getElementById("footer_contact_title").innerText = data.footer_contact_title;
-            document.getElementById("footer_contact_text").innerText = data.footer_contact_text;
-            document.getElementById("footer_copyright").innerText = data.footer_copyright;
+            document.getElementById("site_title").innerText = data.siteName;
+            document.getElementById("hero_title").innerText = data.heroTitle;
+            document.getElementById("hero_desc").innerText = data.heroDesc;
+            document.getElementById("featured_title").innerText = data.featuredTitle;
+            document.getElementById("writing_title").innerText = data.writingTitle;
+            document.getElementById("sub_title").innerText = data.subTitle;
+            document.getElementById("sub_desc").innerText = data.subDesc;
+            document.getElementById("sub_tip").innerText = data.subTip;
+            document.getElementById("footer_about_title").innerText = data.footerAboutTitle;
+            document.getElementById("footer_about_text").innerText = data.footerAboutText;
+            document.getElementById("footer_nav_title").innerText = data.footerNavTitle;
+            document.getElementById("footer_cat_title").innerText = data.footerCatTitle;
+            document.getElementById("footer_contact_title").innerText = data.footerContactTitle;
+            document.getElementById("footer_contact_text").innerText = data.footerContactText;
+            document.getElementById("footer_copyright").innerText = data.footerCopyright;
 
             let novelsHtml = "";
             data.novels.forEach((n,i)=>{
@@ -232,11 +235,11 @@
             <div class="flex flex-col md:flex-row gap-8 items-center bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm" data-aos="fade-up">
                 <div class="md:w-1/3"><div class="aspect-video overflow-hidden rounded-md bg-gray-100 dark:bg-gray-700"></div></div>
                 <div class="md:w-2/3">
-                    <span class="text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">${data.writing_item_type}</span>
-                    <h3 class="text-2xl font-bold mt-1 mb-3 dark:text-white">${data.writing_item_title}</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">${data.writing_item_desc}</p>
+                    <span class="text-xs font-medium text-secondary dark:text-gray-400 uppercase tracking-wider">${data.skill.type}</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-3 dark:text-white">${data.skill.title}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">${data.skill.desc}</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-secondary dark:text-gray-400">${data.writing_item_date}</span>
+                        <span class="text-sm text-secondary dark:text-gray-400">${data.skill.date}</span>
                         <button class="text-primary dark:text-gray-300 hover:text-secondary dark:hover:text-gray-200 transition-colors flex items-center gap-2">阅读更多 <i class="fa fa-arrow-right"></i></button>
                     </div>
                 </div>

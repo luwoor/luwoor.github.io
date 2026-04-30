@@ -16,10 +16,11 @@
         .config-item input,.config-item textarea {width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
         .config-item textarea {min-height:100px;resize:vertical;}
         .tip {font-size:12px;color:#888;margin-top:4px;}
-        .btn-group {display:flex;gap:15px;margin-top:20px;}
+        .btn-group {display:flex;gap:15px;margin-top:20px;flex-wrap:wrap;}
         .btn {padding:10px 25px;border:none;border-radius:6px;cursor:pointer;font-size:15px;}
         .btn-primary {background:#ff6b35;color:#fff;}
-        .btn-success {background:#28a4c9;color:#fff;}
+        .btn-success {background:#28a745;color:#fff;}
+        .btn-other {background:#6c757d;color:#fff;}
         .preview-panel {max-width:1000px;margin:0 auto;}
         .bread-nav {font-size:14px;color:#666;padding:15px 20px;}
         .top-wrapper {display:flex;align-items:center;padding:30px 20px;border-bottom:1px solid #eee;}
@@ -48,7 +49,14 @@
         .float-nav {position:fixed;right:20px;bottom:30px;display:flex;flex-direction:column;gap:12px;z-index:999;}
         .float-btn {background:transparent;border:none;font-size:22px;cursor:pointer;color:#666;padding:5px;}
         .float-btn:hover {color:#ff6b35;}
-        @media (max-width:768px){.top-wrapper{flex-direction:column;align-items:center;padding:20px;}.author-section{order:1;margin-bottom:20px;}.split-line{display:none;}.novel-section{order:2;width:100%;}.novel-info{text-align:left;}.chapter-list{grid-template-columns:1fr;}}
+        @media (max-width:768px){
+            .top-wrapper{flex-direction:column;align-items:center;padding:20px;}
+            .author-section{order:1;margin-bottom:20px;}
+            .split-line{display:none;}
+            .novel-section{order:2;width:100%;}
+            .novel-info{text-align:left;}
+            .chapter-list{grid-template-columns:1fr;}
+        }
     </style>
 </head>
 <body>
@@ -95,6 +103,7 @@
         </div>
         <div class="btn-group">
             <button class="btn btn-primary" onclick="updatePreview()">更新预览</button>
+            <button class="btn btn-other" onclick="reverseChapter()">正序/倒序切换</button>
             <button class="btn btn-success" onclick="exportZip()">导出整本书(分章ZIP)</button>
         </div>
     </div>
@@ -140,10 +149,13 @@
 let novelData={
     coverFile:null,
     avatarFile:null,
-    name:"",tags:[],intro:"",authorName:"",authorBio:"",chapters:[],wordCount:0,lastChapter:""
+    name:"",tags:[],intro:"",authorName:"",authorBio:"",
+    chapters:[],originChapters:[], // 保留原始章节，用于正倒序切换
+    wordCount:0,lastChapter:"",
+    isReverse:false
 };
 
-// 封面上传（保存文件对象）
+// 封面上传
 document.getElementById("coverInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
     novelData.coverFile = file;
@@ -151,7 +163,7 @@ document.getElementById("coverInput").addEventListener("change",function(e){
     document.getElementById("previewCover").src=url;
 });
 
-// 头像上传（保存文件对象）
+// 头像上传
 document.getElementById("authorAvatarInput").addEventListener("change",function(e){
     const file=e.target.files[0];if(!file)return;
     novelData.avatarFile = file;
@@ -168,25 +180,49 @@ document.getElementById("txtInput").addEventListener("change",function(e){
     reader.readAsText(file,"UTF-8");
 });
 
+// 解析章节 保留原始副本
 function parseChapters(txt){
     const reg=/(第[一二三四五六七八九十百千万\d]+[章节卷部篇])/g;
     const lines=txt.split("\n").filter(x=>x.trim());
-    novelData.chapters=[];
     let cur=null;
     let allText="";
+    let tempChapters=[];
+
     lines.forEach(line=>{
         if(reg.test(line.trim())){
-            if(cur)novelData.chapters.push(cur);
+            if(cur)tempChapters.push(cur);
             cur={title:line.trim(),content:""};
         }else if(cur){
             cur.content+=line+"\n";
         }
         allText+=line;
     });
-    if(cur)novelData.chapters.push(cur);
+    if(cur)tempChapters.push(cur);
+
+    novelData.originChapters = [...tempChapters];
+    novelData.chapters = [...tempChapters];
+    novelData.isReverse = false;
+
     novelData.wordCount=Math.round(allText.replace(/\s/g,"").length/10000);
     novelData.lastChapter=novelData.chapters.length?novelData.chapters.at(-1).title:"";
     alert("✅ 解析完成：共 "+novelData.chapters.length+" 章");
+    updatePreview();
+}
+
+// 正序倒序切换
+function reverseChapter(){
+    if(novelData.originChapters.length===0){
+        alert("请先导入TXT小说！");
+        return;
+    }
+    novelData.isReverse = !novelData.isReverse;
+    if(novelData.isReverse){
+        novelData.chapters = [...novelData.originChapters].reverse();
+        alert("已切换为 倒序");
+    }else{
+        novelData.chapters = [...novelData.originChapters];
+        alert("已切换为 正序");
+    }
     updatePreview();
 }
 
@@ -231,7 +267,7 @@ function exportZip(){
     }
     const zip=new JSZip();
     
-    // 把图片真实写入ZIP（不是base64）
+    // 图片原文件打包，不base64
     if(novelData.coverFile) zip.file("cover.jpg", novelData.coverFile);
     if(novelData.avatarFile) zip.file("avatar.jpg", novelData.avatarFile);
     

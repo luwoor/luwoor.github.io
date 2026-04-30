@@ -35,10 +35,11 @@
         .novel-stat {font-size:14px;color:#666;margin-bottom:6px;}
         .novel-update {font-size:13px;color:#888;margin-bottom:12px;}
         .btn-read {background:#ff6b35;color:#fff;padding:8px 20px;border-radius:20px;border:none;cursor:pointer;}
-        .author-avatar {width:80px;height:80px;border-radius:50%;object-fit:cover;background:#f0f0f0;margin-bottom:10px;border:2px solid #ff6b35;}
-        .author-label {display:inline-block;background:#ff6b35;color:#fff;padding:3px 8px;border-radius:4px;font-size:12px;margin-right:6px;}
-        .author-name {font-size:16px;font-weight:bold;margin-bottom:4px;}
-        .author-desc {font-size:12px;color:#888;max-width:160px;}
+        /* 👇 修改：去掉头像边框，改为清爽样式 */
+        .author-avatar {width:80px;height:80px;border-radius:50%;object-fit:cover;background:#f0f0f0;margin-bottom:10px;}
+        .author-name {font-size:16px;font-weight:bold;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .author-label {display:inline-block;background:#ffb726;color:#fff;padding:2px 6px;border-radius:3px;font-size:12px;}
+        .author-desc {font-size:12px;color:#888;max-width:160px;line-height:1.5;}
         .section {padding:20px;border-bottom:1px solid #eee;}
         .section-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
         .section-title {font-size:20px;font-weight:bold;}
@@ -313,10 +314,11 @@ body{background:#fff;color:#333;transition:all 0.3s}
 .novel-stat{font-size:14px;color:#666;margin-bottom:6px}
 .novel-update{font-size:13px;color:#888;margin-bottom:12px}
 .btn-read{background:#ff6b35;color:#fff;padding:8px 20px;border-radius:20px;border:none;cursor:pointer;text-decoration:none;display:inline-block}
-.author-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;background:#f0f0f0;margin-bottom:10px;border:2px solid #ff6b35}
-.author-label{background:#ff6b35;color:#fff;padding:3px 8px;border-radius:4px;font-size:12px;margin-right:6px}
-.author-name{font-size:16px;font-weight:bold;display:flex;align-items:center;justify-content:center}
-.author-desc{font-size:12px;color:#888;max-width:160px}
+/* 👇 导出的首页也同步修改作者样式 */
+.author-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;background:#f0f0f0;margin-bottom:10px;}
+.author-name{font-size:16px;font-weight:bold;display:flex;align-items:center;justify-content:center;gap:8px;}
+.author-label{display:inline-block;background:#ffb726;color:#fff;padding:2px 6px;border-radius:3px;font-size:12px;}
+.author-desc{font-size:12px;color:#888;max-width:160px;line-height:1.5;}
 .section{padding:20px;border-bottom:1px solid #eee}
 .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .section-title{font-size:20px;font-weight:bold}

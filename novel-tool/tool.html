@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
     <title>小说分章导出器-GitHub专用</title>
     <style>
         * {margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif;}
@@ -42,8 +42,9 @@
         .section {padding:20px;border-bottom:1px solid #eee;}
         .section-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
         .section-title {font-size:20px;font-weight:bold;}
-        .sort-buttons {font-size:14px;}
-        .sort-btn {color:#666;cursor:pointer;margin-left:10px;}
+        /* 👇 只改了这里，变成小号字，和最近更新一致 */
+        .sort-buttons {font-size:13px; color:#666;}
+        .sort-btn {cursor:pointer;margin-left:10px;}
         .sort-btn.active {color:#ff6b35;}
         .intro-text {line-height:1.7;color:#444;}
         .chapter-list {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
@@ -296,6 +297,7 @@ function exportZip(){
     });
 }
 
+// 生成带完整排序JS的index.html
 function generateIndexPage(){
     return "<!DOCTYPE html><html lang='zh-CN'><head>"+
     "<meta charset='UTF-8'>"+
@@ -327,9 +329,9 @@ function generateIndexPage(){
     ".section{padding:20px;border-bottom:1px solid #eee}"+
     ".section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}"+
     ".section-title{font-size:20px;font-weight:bold}"+
-    ".sort-buttons{font-size:14px}"+
-    ".sort-btn{color:#666;cursor:pointer;margin-left:10px}"+
-    ".sort-btn.active{color:#ff6b35}"+
+    ".sort-buttons{font-size:13px;color:#666;}"+
+    ".sort-btn{cursor:pointer;margin-left:10px;}"+
+    ".sort-btn.active{color:#ff6b35;}"+
     ".intro-text{line-height:1.7}"+
     ".chapter-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}"+
     ".chapter-item{padding:8px 12px;background:#f9f9f9;border-radius:6px;cursor:pointer;text-decoration:none;color:#333}"+
@@ -366,10 +368,37 @@ function generateIndexPage(){
     "<div class='author-name'><span class='author-label'>作者</span>"+novelData.authorName+"</div>"+
     "<div class='author-desc'>"+novelData.authorBio+"</div></div></div>"+
     "<div class='section'><div class='section-title'>作品简介</div><div class='intro-text'>"+novelData.intro+"</div></div>"+
-    "<div class='section'><div class='section-head'><div class='section-title'>全部章节 · "+novelData.chapters.length+"章</div><div class='sort-buttons'><span class='sort-btn active'>正序</span><span class='sort-btn'>倒序</span></div></div>"+
+    "<div class='section'><div class='section-head'><div class='section-title'>全部章节 · "+novelData.chapters.length+"章</div><div class='sort-buttons'><span class='sort-btn "+(novelData.isReverse?"":"active")+"' id='sortAsc' onclick='setSortAsc()'>正序</span><span class='sort-btn "+(novelData.isReverse?"active":"")+"' id='sortDesc' onclick='setSortDesc()'>倒序</span></div></div>"+
     "<div class='chapter-list'>"+novelData.chapters.map((chap,idx)=>"<a class='chapter-item' href='chapter_"+(idx+1)+".html'>"+chap.title+"</a>").join("")+"</div></div></div>"+
-    "<script>function toggleNight(){document.body.classList.toggle('night');const btn=event.target;btn.textContent=document.body.classList.contains('night')?'☀':'◐';}<\/script>"+
-    "</body></html>";
+    "<script>"+
+    "let originChapters="+JSON.stringify(novelData.originChapters)+";"+
+    "let chapters=[...originChapters];"+
+    "let isReverse="+novelData.isReverse+";"+
+    "function setSortAsc(){"+
+    "isReverse=false;"+
+    "chapters=[...originChapters];"+
+    "updateSortButtons();"+
+    "updateChapterList();"+
+    "}"+
+    "function setSortDesc(){"+
+    "isReverse=true;"+
+    "chapters=[...originChapters].reverse();"+
+    "updateSortButtons();"+
+    "updateChapterList();"+
+    "}"+
+    "function updateSortButtons(){"+
+    "document.getElementById('sortAsc').classList.toggle('active',!isReverse);"+
+    "document.getElementById('sortDesc').classList.toggle('active',isReverse);"+
+    "}"+
+    "function updateChapterList(){"+
+    "let listHtml='';"+
+    "chapters.forEach((chap,idx)=>{"+
+    "listHtml+='<a class=\"chapter-item\" href=\"chapter_'+(idx+1)+'.html\">'+chap.title+'</a>';"+
+    "});"+
+    "document.querySelector('.chapter-list').innerHTML=listHtml;"+
+    "}"+
+    "function toggleNight(){document.body.classList.toggle('night');const btn=event.target;btn.textContent=document.body.classList.contains('night')?'☀':'◐';}"+
+    "<\/script></body></html>";
 }
 
 function generateChapterPage(chap,idx,prevIdx,nextIdx){

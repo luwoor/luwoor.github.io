@@ -17,16 +17,17 @@
             background-size: cover;
             background-attachment: fixed;
             min-height: 100vh;
-            /* 整体向左微调，实现居中偏左 */
-            display: flex;
+            /* ✅ 严格1:2布局，整体居中，不再偏左 */
+            display: grid;
+            grid-template-columns: 1fr 2fr;
             align-items: center;
-            justify-content: flex-start;
-            gap: 50px;
-            padding: 20px 80px;
-            transition: all 0.3s ease;
+            justify-items: center;
+            gap: 30px;
+            padding: 20px;
+            padding-bottom: 80px; /* 给底部版权留固定空间 */
         }
 
-        /* -------------------------- 左栏：恢复细长个人窗口（原版本样式） -------------------------- */
+        /* -------------------------- 左栏：1份 个人窗口（垂直居中） -------------------------- */
         .left-window {
             width: 280px;
             height: 420px;
@@ -38,23 +39,22 @@
             overflow: hidden;
             z-index: 2;
             border: 1px solid rgba(255,255,255,0.2);
-            flex-shrink: 0;
         }
 
-        /* -------------------------- 右栏：电脑端堆叠窗口 -------------------------- */
+        /* -------------------------- 右栏：2份 放大堆叠窗口（整体上移） -------------------------- */
         .right-stack {
             position: relative;
-            width: 480px;
-            height: 360px;
-            flex-shrink: 0;
+            width: 550px; /* ✅ 窗口放大 */
+            height: 400px; /* ✅ 窗口放大 */
+            margin-top: -40px; /* ✅ 整体向上偏移1/2，往上移 */
         }
 
         .window-back {
             position: absolute;
             top: -40px;
             left: -40px;
-            width: 480px;
-            height: 360px;
+            width: 550px;
+            height: 400px;
             background: rgba(255, 255, 255, 0.65);
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
@@ -69,8 +69,8 @@
             position: absolute;
             top: 40px;
             left: 40px;
-            width: 480px;
-            height: 360px;
+            width: 550px;
+            height: 400px;
             background: rgba(255, 255, 255, 0.75);
             -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
@@ -97,341 +97,4 @@
             border-radius: 50%;
         }
 
-        .dot.red { background: #ff5f57; }
-        .dot.yellow { background: #ffbd2e; }
-        .dot.green { background: #28c840; }
-
-        .window-title {
-            margin-left: 15px;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .window-content {
-            padding: 20px;
-            height: calc(100% - 40px);
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.8;
-            color: #333;
-        }
-
-        /* -------------------------- 左侧细长窗口内容 -------------------------- */
-        .left-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding-top: 20px;
-        }
-
-        .avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid rgba(255,255,255,0.5);
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .name-title {
-            font-size: 22px;
-            font-weight: 500;
-            color: #333;
-            letter-spacing: 2px;
-        }
-
-        .line {
-            width: 80%;
-            height: 1px;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .intro-text {
-            text-align: center;
-            font-size: 14px;
-            color: #555;
-            line-height: 1.8;
-        }
-
-        .nav-group {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-
-        .nav-item {
-            font-size: 15px;
-            color: #333;
-            cursor: pointer;
-            transition: 0.2s;
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-
-        .nav-item:hover {
-            background: rgba(0,0,0,0.05);
-        }
-
-        /* -------------------------- 右侧小说内容 -------------------------- */
-        .book-content {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-        }
-
-        .book-cover {
-            width: 100px;
-            height: 140px;
-            border-radius: 6px;
-            object-fit: cover;
-            background: #f0f0f0;
-            border:1px solid #ddd;
-        }
-
-        .book-text {
-            flex: 1;
-            font-size: 13px;
-        }
-
-        /* -------------------------- 底部版权 -------------------------- */
-        footer {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #fff;
-            font-size: 12px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            line-height: 1.8;
-            z-index: 10;
-        }
-
-        /* ============================================== */
-        /* ===================== 手机端终极轮播（重点） ===================== */
-        /* ============================================== */
-        @media (max-width: 900px) {
-            body {
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 30px;
-                padding: 20px;
-                padding-bottom: 120px;
-            }
-
-            /* 电脑堆叠窗口彻底隐藏 */
-            .right-stack {
-                display: none !important;
-            }
-
-            /* 轮播容器强制显示 + 自动滚动 */
-            .mobile-book-carousel {
-                display: block !important;
-                width: 95vw;
-                overflow: hidden;
-                position: relative;
-            }
-
-            /* 滚动轨道：核心无限循环 */
-            .carousel-track {
-                display: flex;
-                gap: 25px;
-                /* 无限滚动动画 */
-                animation: scroll 25s linear infinite;
-            }
-
-            /* 鼠标悬停暂停 */
-            .mobile-book-carousel:hover .carousel-track {
-                animation-play-state: paused;
-            }
-
-            /* 触摸/鼠标拖动生效 */
-            .mobile-book-carousel {
-                cursor: grab;
-            }
-            .mobile-book-carousel:active {
-                cursor: grabbing;
-            }
-        }
-
-        /* 电脑端隐藏轮播 */
-        .mobile-book-carousel {
-            display: none;
-        }
-
-        /* 轮播卡片样式 */
-        .mobile-book-card {
-            flex: 0 0 180px;
-            height: 240px;
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .mobile-book-cover {
-            width: 140px;
-            height: 180px;
-            border-radius: 6px;
-            background: #f0f0f0;
-            margin-bottom: 12px;
-        }
-
-        .mobile-book-name {
-            font-size: 14px;
-            color: #333;
-            text-align: center;
-        }
-
-        /* 核心：无限滚动动画（胶片效果） */
-        @keyframes scroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- 左栏：恢复原版细长个人窗口 -->
-    <div class="left-window">
-        <div class="window-header">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-            <div class="window-title">profile.sh — 个人资料</div>
-        </div>
-        <div class="window-content left-content">
-            <div class="avatar">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bookfan" alt="头像">
-            </div>
-            <div class="name-title">I'm BookFan</div>
-            <div class="line"></div>
-            <div class="intro-text">
-                热爱小说，分享好书<br>
-                专注都市、玄幻、悬疑<br>
-                每日更新优质小说资源
-            </div>
-            <div class="nav-group">
-                <a href="#" class="nav-item">关于</a>
-                <a href="#" class="nav-item">工具</a>
-                <a href="#" class="nav-item">联系</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 右栏：电脑端交叉堆叠窗口 -->
-    <div class="right-stack">
-        <div class="window-back">
-            <div class="window-header">
-                <div class="dot red"></div>
-                <div class="dot yellow"></div>
-                <div class="dot green"></div>
-                <div class="window-title">more.sh — 更多好书推荐</div>
-            </div>
-            <div class="window-content">
-                <div class="book-content">
-                    <div class="book-cover"></div>
-                    <div class="book-text">
-                        <p>root@book ~ > cat book2.txt</p>
-                        <p>📖 书名：我在精神病院学斩神</p>
-                        <p>📌 类型：都市 / 异能 / 脑洞</p>
-                        <p>✨ 简介：精神病院藏龙卧虎...</p>
-                        <p>🔥 热度：已完结 · 400万字</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="window-front">
-            <div class="window-header">
-                <div class="dot red"></div>
-                <div class="dot yellow"></div>
-                <div class="dot green"></div>
-                <div class="window-title">recommend.sh — 今日精选小说</div>
-            </div>
-            <div class="window-content">
-                <div class="book-content">
-                    <div class="book-cover"></div>
-                    <div class="book-text">
-                        <p>root@book ~ > cat book.txt</p>
-                        <p>📖 书名：我的右眼是神级计算机</p>
-                        <p>📌 类型：都市 / 系统 / 爽文</p>
-                        <p>✨ 简介：主角觉醒神级右眼...</p>
-                        <p>🔥 热度：已完结 · 322万字</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 手机端：终极版胶片式轮播（自动滚动+鼠标悬停暂停+触摸滑动） -->
-    <div class="mobile-book-carousel">
-        <div class="carousel-track">
-            <!-- 第一组卡片 -->
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">我的右眼是神级计算机</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">我在精神病院学斩神</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">都市爽文合集</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">古风仙侠精选</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">悬疑烧脑小说</div>
-            </div>
-            <!-- 第二组（无缝循环关键） -->
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">我的右眼是神级计算机</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">我在精神病院学斩神</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">都市爽文合集</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">古风仙侠精选</div>
-            </div>
-            <div class="mobile-book-card">
-                <div class="mobile-book-cover"></div>
-                <div class="mobile-book-name">悬疑烧脑小说</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 底部版权 -->
-    <footer>
-        📖 所有小说版权归原作者及平台所有 | 本站仅作个人阅读分享<br>
-        ⚠️ 禁止商用，侵权请联系删除 | © 2025 个人小说播客
-    </footer>
-</body>
-</html>
+        .dot.red { background: #ff

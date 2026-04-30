@@ -74,7 +74,7 @@
         .float-btn:hover {color:#ff6b35;}
 
         /* ============================================== */
-        /* ✅ 手机端最终优化版（你要的全部在这里） */
+        /* 手机端：博客评论样式（左头像 + 右名字+简介） */
         /* ============================================== */
         @media (max-width:768px){
             .top-wrapper {
@@ -88,31 +88,39 @@
                 flex-direction: column;
                 align-items: center;
                 margin-bottom: 20px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #eee; /* 封面与作者之间的线 */
             }
             .split-line {display:none !important;}
 
-            /* 作者区块：封面下方、简介上方、左对齐、无头像、同行显示 */
             .author-section {
                 width: 100%;
                 display: flex;
                 flex-direction: row;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: flex-start;
-                text-align: left;
-                margin: 0 0 20px 0;
+                gap: 10px;
+                margin: 0 0 25px 0;
                 padding: 0;
+                text-align: left;
             }
-            .author-avatar {display:none !important;}
+            .author-avatar {
+                display: block !important;
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 50% !important;
+                margin: 0 !important;
+            }
             .author-name {
                 justify-content: flex-start;
-                margin-bottom: 0;
+                margin-bottom: 4px;
             }
             .author-desc {
-                display: inline;
-                margin-left: 8px;
-                line-height: 1;
+                display: block;
+                margin-left: 0;
+                line-height: 1.4;
+                color: #666;
             }
-
             .chapter-list{grid-template-columns:1fr;}
         }
     </style>
@@ -180,11 +188,13 @@
             <div class="split-line"></div>
             <div class="author-section">
                 <img class="author-avatar" id="previewAvatar">
-                <div class="author-name">
-                    <span class="author-label">作者</span>
-                    <span id="previewAuthorName">作者名</span>
+                <div>
+                    <div class="author-name">
+                        <span class="author-label">作者</span>
+                        <span id="previewAuthorName">作者名</span>
+                    </div>
+                    <div class="author-desc" id="previewAuthorBio">作者简介</div>
                 </div>
-                <div class="author-desc" id="previewAuthorBio">作者简介</div>
             </div>
         </div>
         <div class="section">
@@ -417,27 +427,37 @@ body.night .chapter-item{background:#333;color:#ccc}
         flex-direction: column;
         align-items: center;
         margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
     }
     .split-line {display:none !important;}
     .author-section {
         width: 100%;
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         justify-content: flex-start;
-        text-align: left;
-        margin: 0 0 20px 0;
+        gap: 10px;
+        margin: 0 0 25px 0;
         padding: 0;
+        text-align: left;
     }
-    .author-avatar {display:none !important;}
+    .author-avatar {
+        display: block !important;
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 50% !important;
+        margin: 0 !important;
+    }
     .author-name {
         justify-content: flex-start;
-        margin-bottom: 0;
+        margin-bottom: 4px;
     }
     .author-desc {
-        display: inline;
-        margin-left: 8px;
-        line-height: 1;
+        display: block;
+        margin-left: 0;
+        line-height: 1.4;
+        color: #666;
     }
     .chapter-list{grid-template-columns:1fr;}
 }
@@ -465,8 +485,10 @@ body.night .chapter-item{background:#333;color:#ccc}
 <div class="split-line"></div>
 <div class="author-section">
 <img class="author-avatar" src="avatar.jpg">
+<div>
 <div class="author-name"><span class="author-label">作者</span>${novelData.authorName}</div>
 <div class="author-desc">${novelData.authorBio}</div>
+</div>
 </div>
 </div>
 <div class="section">

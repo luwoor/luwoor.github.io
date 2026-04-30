@@ -99,12 +99,14 @@
         /* ========== 手机端（≤768px）重排 ========== */
         @media (max-width:768px){
             .top-wrapper {
+                display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 20px;
             }
-            /* 手机端：作者区块在上，带底部分隔线 */
+            /* 关键：用 order 调整顺序，作者区排第一 */
             .author-section {
+                order: 1;
                 width: 100%;
                 display: flex;
                 flex-direction: row;
@@ -116,8 +118,9 @@
                 border-bottom: 1px solid #eee;
                 text-align: left;
             }
-            /* 小说信息在作者下方，居中 */
+            /* 小说区排第二 */
             .novel-section {
+                order: 2;
                 width: 100%;
                 display: flex;
                 flex-direction: column;
@@ -198,7 +201,7 @@
     <div class="preview-panel">
         <div class="bread-nav">首页 / <span id="previewBreadName">小说名称</span></div>
         <div class="top-wrapper">
-            <!-- 电脑端：左边小说(2)；手机端：自动掉到下面 -->
+            <!-- 电脑端：左边小说(2)；手机端：order:2，掉到下面 -->
             <div class="novel-section">
                 <img class="novel-cover" id="previewCover">
                 <div class="novel-info">
@@ -213,7 +216,7 @@
             <!-- 电脑端竖线分隔 -->
             <div class="split-line"></div>
 
-            <!-- 电脑端：右边作者(1)；手机端：自动跑到最上面 -->
+            <!-- 电脑端：右边作者(1)；手机端：order:1，跑到最上面 -->
             <div class="author-section">
                 <img class="author-avatar" id="previewAvatar">
                 <div>
@@ -451,11 +454,13 @@ body.night .chapter-item{background:#333;color:#ccc}
 }
 @media (max-width:768px){
     .top-wrapper {
+        display: flex;
         flex-direction: column;
         align-items: flex-start;
         padding: 20px;
     }
     .author-section {
+        order: 1;
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -468,6 +473,7 @@ body.night .chapter-item{background:#333;color:#ccc}
         text-align: left;
     }
     .novel-section {
+        order: 2;
         width: 100%;
         display: flex;
         flex-direction: column;
